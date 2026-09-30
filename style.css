@@ -22,7 +22,7 @@ body {
   margin: 0 auto;
 }
 
-/* Sekcja nagłówka z logo */
+/* Nagłówek i logo */
 header, .app-header {
   text-align: center;
   margin-bottom: 20px;
@@ -46,31 +46,67 @@ h1 {
   background: #ffffff;
   border-radius: 16px;
   padding: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
 }
 
-/* Formularz dodawania */
-.form-group {
+/* Formularz wprowadzania */
+.quick-actions, .form-group {
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
 }
 
-input[type="text"], select {
+.btn-scan, .btn-voice, button {
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.btn-scan {
   flex: 1;
-  padding: 10px 14px;
-  border: 1px solid #cbd5e1;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-voice {
+  flex: 1;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+input[type="text"], select {
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   font-size: 0.95rem;
+  background-color: #f8fafc;
   outline: none;
 }
 
 input[type="text"]:focus, select:focus {
-  border-color: #6366f1;
+  border-color: #0284c7;
+  background-color: #ffffff;
 }
 
-button[type="submit"] {
+.form-group input[type="text"] {
+  flex: 2;
+}
+
+.form-group select {
+  flex: 1;
+}
+
+button[type="submit"], .btn-add {
   background: #0284c7;
   color: #ffffff;
   border: none;
@@ -89,51 +125,65 @@ button[type="submit"] {
   cursor: pointer;
 }
 
-/* Przyciski skanera i głosu */
-.btn-scan {
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
-  color: #ffffff;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-voice {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #ffffff;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* Zakładki (Spiżarnia / Do kupienia) */
-.tabs {
+/* Zakładki Spiżarnia / Do kupienia */
+.tabs, nav.tabs, div[role="tablist"] {
   display: flex;
   background: #e2e8f0;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 4px;
   margin-bottom: 16px;
+  gap: 4px;
 }
 
-.tab-btn {
+.tabs button, .tab-btn, .tab {
   flex: 1;
-  padding: 8px;
+  padding: 10px 14px;
   border: none;
   background: transparent;
-  border-radius: 6px;
+  border-radius: 8px;
   font-weight: 600;
   color: #64748b;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.tab-btn.active {
+.tabs button.active, .tab-btn.active, .tab.active {
   background: #ffffff;
   color: #0f172a;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Pole wyszukiwania */
+.search-box, input[placeholder*="Szukaj"] {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+/* Ogólne style dla przycisków akcji na dole */
+.action-buttons, .bottom-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.action-buttons button, .card button:not(.btn-scan):not(.btn-voice):not([type="submit"]):not(.tab-btn) {
+  padding: 8px 14px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.action-buttons button:hover, .card button:not(.btn-scan):not(.btn-voice):not([type="submit"]):not(.tab-btn):hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
 }
 
 /* Listy produktów */
@@ -143,8 +193,8 @@ h3 {
   letter-spacing: 0.05em;
   color: #0284c7;
   margin: 16px 0 8px 0;
-  border-bottom: 1px solid #f1f5f9;
   padding-bottom: 4px;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .item {
@@ -155,12 +205,6 @@ h3 {
   border-bottom: 1px solid #f8fafc;
 }
 
-.item-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 .badge {
   background: #fee2e2;
   color: #dc2626;
@@ -168,45 +212,4 @@ h3 {
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 4px;
-}
-
-/* Przyciski ilości / akcji */
-.controls {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.btn-qty {
-  width: 28px;
-  height: 28px;
-  border: 1px solid #cbd5e1;
-  background: #f8fafc;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.qty-count {
-  font-weight: 600;
-  min-width: 16px;
-  text-align: center;
-}
-
-.btn-delete {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  cursor: pointer;
-  padding: 4px 8px;
-}
-
-.btn-buy {
-  background: #10b981;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  cursor: pointer;
 }
