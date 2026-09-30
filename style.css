@@ -1,267 +1,328 @@
-{
-box-sizing: border-box;
-margin: 0;
-padding: 0;
+/* ==========================================================================
+   1. ZMIENNE I USTAWIENIA PODSTAWOWE
+   ========================================================================== */
+:root {
+  --bg-color: #a3c9a8;
+  --card-bg: #ffffff;
+  --text-primary: #1e293b;
+  --text-muted: #64748b;
+  --accent-blue: #0284c7;
+  --accent-purple: #7c3aed;
+  --accent-green: #059669;
+  --border-radius: 16px;
+  --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-background-color: #b3d4b6;
-color: #1e293b;
-min-height: 100vh;
-display: flex;
-justify-content: center;
-align-items: flex-start;
-padding: 16px 12px;
-position: relative;
-overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 20px 15px;
 }
 
-/* Główny kontener aplikacji */
-.app-container, .container, main {
-width: 100%;
-max-width: 480px;
-margin: 0 auto;
-position: relative;
-z-index: 1;
+.container {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
 }
 
-/* Nagłówek */
-header, .app-header {
-text-align: center;
-margin-top: 100px;
-margin-bottom: 20px;
-position: relative;
+/* ==========================================================================
+   2. NAGŁÓWEK I TŁO Z LODÓWKĄ
+   ========================================================================== */
+header, .header {
+  position: relative;
+  text-align: center;
+  padding: 30px 0 10px 0;
+  margin-bottom: -20px; /* Lekkie wsunięcie pod pierwszą kartę */
+  z-index: 1;
 }
 
-/* Ukrywamy obrazki umieszczone bezpośrednio w kodzie HTML nagłówka */
-header img, .logo-img {
-display: none !important;
+/* Ukrycie obrazka z pierwszego planu */
+header img, .header img, .logo-img {
+  display: none !important;
 }
 
-h1 {
-font-size: 1.75rem;
-font-weight: 800;
-color: #0f172a;
+/* Tytuł "Domowa Spiżarnia" wkomponowany z tłem */
+h1, .app-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 120px; /* Przestrzeń w środku napisu na wyświetlenie lodówki z tła */
+  position: relative;
 }
 
-/* Pojedyncza ikona lodówki umieszczona wyłącznie w tle za kartą */
-.card:first-of-type {
-position: relative;
-overflow: visible;
+/* Wstawienie lodówki jako tło nagłówka */
+header::before, .header::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  width: 130px;
+  height: 130px;
+  background-image: url('fridge.png'); /* Podmień na ścieżkę do swojego pliku PNG/SVG */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  z-index: -1;
 }
 
-.card:first-of-type::before {
-content: "";
-position: absolute;
-top: -120px;
-left: 50%;
-transform: translateX(-50%);
-width: 150px;
-height: 150px;
-background-image: url('icon-512.png');
-background-size: contain;
-background-repeat: no-repeat;
-background-position: center;
-z-index: -1;
-mix-blend-mode: multiply;
-}
-
-/* Karty sekcji */
+/* ==========================================================================
+   3. KARTY I SEKCJE
+   ========================================================================== */
 .card {
-background: #ffffff;
-border-radius: 16px;
-padding: 16px;
-margin-bottom: 16px;
-box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-position: relative;
-z-index: 1;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  position: relative;
+  z-index: 2;
 }
 
-/* Szybkie akcje (Skanuj / Głosowo) */
-.quick-actions {
-display: flex;
-gap: 8px;
-margin-bottom: 12px;
+/* AKCJE / PRZYCISKI GÓRNE */
+.action-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
-.btn-scan, .btn-voice {
-flex: 1;
-min-width: 0;
-padding: 10px 8px;
-border: none;
-border-radius: 8px;
-font-weight: 600;
-font-size: 0.85rem;
-color: #ffffff;
-cursor: pointer;
-text-align: center;
-white-space: nowrap;
+.btn-action {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  transition: transform 0.1s ease, opacity 0.2s ease;
 }
 
-.btn-scan {
-background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+.btn-action:active {
+  transform: scale(0.98);
+}
+
+.btn-ean {
+  background-color: #6366f1;
 }
 
 .btn-voice {
-background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background-color: #10b981;
 }
 
-/* Formularz wprowadzania produktów */
-.form-group {
-display: flex;
-flex-wrap: wrap;
-gap: 8px;
-margin-bottom: 12px;
-width: 100%;
+/* FORMULARZ DODAWANIA */
+.add-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-input[type="text"], select {
-padding: 10px 12px;
-border: 1px solid #e2e8f0;
-border-radius: 8px;
-font-size: 0.9rem;
-background-color: #f8fafc;
-outline: none;
-box-sizing: border-box;
+.input-text {
+  flex: 1 1 180px;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  outline: none;
+  font-size: 0.95rem;
 }
 
-input[type="text"]:focus, select:focus {
-border-color: #0284c7;
-background-color: #ffffff;
+.input-text:focus {
+  border-color: var(--accent-blue);
+  background-color: #ffffff;
 }
 
-.form-group input[type="text"] {
-flex: 1 1 180px;
-min-width: 0;
+.select-category {
+  flex: 0 1 120px;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  outline: none;
+  font-size: 0.95rem;
 }
 
-.form-group select {
-flex: 1 1 100px;
-min-width: 0;
+.btn-add {
+  background-color: var(--accent-blue);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-button[type="submit"], .btn-add {
-background: #0284c7;
-color: #ffffff;
-border: none;
-padding: 10px 16px;
-border-radius: 8px;
-font-weight: 600;
-cursor: pointer;
-flex: 0 0 auto;
+.checkbox-group {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
 }
 
-.checkbox-label {
-display: flex;
-align-items: center;
-gap: 8px;
-font-size: 0.85rem;
-color: #475569;
-cursor: pointer;
+/* PRZEŁĄCZNIK ZAKŁADEK (Spiżarnia / Do kupienia) */
+.tabs-container {
+  display: flex;
+  background-color: #e2e8f0;
+  padding: 4px;
+  border-radius: 12px;
 }
 
-/* Zakładki Spiżarnia / Do kupienia */
-.tabs, nav.tabs, div[role="tablist"] {
-display: flex;
-background: #e2e8f0;
-border-radius: 12px;
-padding: 4px;
-margin-bottom: 16px;
-gap: 4px;
+.tab-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
 }
 
-.tabs button, .tab-btn, .tab {
-flex: 1;
-padding: 10px 8px;
-border: none;
-background: transparent;
-border-radius: 8px;
-font-weight: 600;
-font-size: 0.9rem;
-color: #64748b;
-cursor: pointer;
-transition: all 0.2s ease;
-text-align: center;
+.tab-btn.active {
+  background: #ffffff;
+  color: var(--text-primary);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.tabs button.active, .tab-btn.active, .tab.active {
-background: #ffffff;
-color: #0f172a;
-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+/* WYSZUKIWARKA */
+.search-container {
+  position: relative;
+  max-width: 200px;
+  z-index: 3;
+  margin-bottom: -10px;
 }
 
-/* Pole wyszukiwania /
-.search-box, input[placeholder="Szukaj"] {
-width: 100%;
-margin-bottom: 12px;
-box-sizing: border-box;
+.search-input {
+  width: 100%;
+  padding: 8px 12px 8px 32px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 0.9rem;
 }
 
-/* Nagłówki kategorii i elementy listy */
-h3 {
-font-size: 0.8rem;
-text-transform: uppercase;
-letter-spacing: 0.05em;
-color: #0284c7;
-margin: 16px 0 8px 0;
-padding-bottom: 4px;
-border-bottom: 1px solid #f1f5f9;
+/* LISTA PRODUKTÓW */
+.category-header {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 16px 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 4px;
 }
 
-.item {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 8px 0;
-border-bottom: 1px solid #f8fafc;
-gap: 8px;
+.product-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
 }
 
-.item-info {
-display: flex;
-align-items: center;
-gap: 6px;
-flex: 1;
-min-width: 0;
-overflow: hidden;
+.product-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.badge {
-background: #fee2e2;
-color: #dc2626;
-font-size: 0.6rem;
-font-weight: 700;
-padding: 2px 5px;
-border-radius: 4px;
-white-space: nowrap;
+.badge-required {
+  background-color: #fee2e2;
+  color: #ef4444;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
 }
 
-.controls {
-display: flex;
-align-items: center;
-gap: 4px;
-flex-shrink: 0;
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-/* Dolne przyciski akcji */
-.action-buttons, .bottom-actions {
-display: flex;
-gap: 8px;
-margin-top: 16px;
-flex-wrap: wrap;
+.btn-qty {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
 }
 
-.action-buttons button, .card button:not(.btn-scan):not(.btn-voice):not([type="submit"]):not(.tab-btn) {
-padding: 8px 12px;
-border: 1px solid #cbd5e1;
-background: #f8fafc;
-color: #334155;
-border-radius: 8px;
-font-size: 0.8rem;
-font-weight: 600;
-cursor: pointer;
-display: inline-flex;
-align-items: center;
-gap: 6px;
+.qty-val {
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
+.btn-remove {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+/* ==========================================================================
+   4. RESPONSYWNOŚĆ (MOBILE)
+   ========================================================================== */
+@media (max-width: 480px) {
+  h1, .app-title {
+    gap: 80px;
+    font-size: 1.6rem;
+  }
+  
+  header::before, .header::before {
+    width: 100px;
+    height: 100px;
+  }
+
+  .action-buttons {
+    grid-template-columns: 1fr;
+  }
+  
+  .add-form {
+    flex-direction: column;
+  }
+  
+  .select-category, .btn-add {
+    width: 100%;
+  }
 }
