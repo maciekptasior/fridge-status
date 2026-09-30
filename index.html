@@ -21,6 +21,20 @@
         📷 Skanuj kod kreskowy
       </button>
 
+      <!-- Karta Formularza Dodawania -->
+<div class="card">
+  <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+    <!-- Przycisk skanera -->
+    <button id="scan-toggle-btn" type="button" onclick="toggleScanner()" class="btn-scan" style="flex: 1;">
+      📷 Skanuj EAN
+    </button>
+    
+    <!-- Nowy przycisk dodawania głosowego -->
+    <button id="voice-toggle-btn" type="button" onclick="handleVoiceInput()" class="btn-voice" style="flex: 1;">
+      🎤 Dodaj głosowo
+    </button>
+  </div>
+      
       <!-- Okno podglądu kamery -->
       <div id="reader" style="display: none; width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 12px;"></div>
 
@@ -91,6 +105,9 @@
     import { toggleScanner } from './scanner.js';
     window.toggleScanner = toggleScanner;
 
+// Import modułu głosowego
+import { startVoiceRecognition } from './voice.js';
+    
     // Konfiguracja Firebase
     const firebaseConfig = {
   apiKey: "AIzaSyCSUj5YjW9A261sHSU8PTQL0jaqWjlg16Q",
@@ -206,6 +223,33 @@
       remove(ref(db, `items/${id}`));
     };
 
+    // Obsługa kliknięcia przycisku mikrofonu
+window.handleVoiceInput = function() {
+  startVoiceRecognition((products) => {
+    products.forEach(product => {
+      // Sprawdzenie czy produkt istnieje już w bazie
+      const existingItem = items.find(i => i.name.toLowerCase() === product.name.toLowerCase());
+
+      if (existingItem) {
+        // Jeśli produkt jest w bazie, ustawiamy go na listę zakupów (qty = 0) lub zwiększamy ilość
+        const itemRef = ref(db, `items/${existingItem.firebaseId}`);
+        update(itemRef, {
+          qty: 0 // Ustawia do kupienia
+        });
+      } else {
+        // Jeśli produktu nie ma w bazie, dodajemy go od razu do listy zakupów (qty = 0)
+        push(ref(db, 'items'), {
+          name: product.name,
+          category: product.category,
+          mustHave: false,
+          qty: 0, // 0 oznaczy produkt jako "Do kupienia"
+          createdAt: Date.now()
+        });
+      }
+    });
+  });
+};
+    
     window.buyAllShoppingItems = function() {
       const shoppingItems = items.filter(i => (i.qty || 0) === 0);
       if (shoppingItems.length === 0) return;
