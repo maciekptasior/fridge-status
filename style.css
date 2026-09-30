@@ -8,7 +8,6 @@
   --primary-hover: #0369a1;
   --ice-accent: #38bdf8;
   --frost-glow: rgba(56, 189, 248, 0.25);
-  --danger: #ef4444;
   --danger-bg: #fee2e2;
   --danger-border: #fca5a5;
   --text-main: #0f172a;
@@ -47,12 +46,10 @@ h1 {
   border: 1px solid var(--card-border);
   border-radius: 20px;
   padding: 16px;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3), 
-              0 0 15px var(--frost-glow);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3), 0 0 15px var(--frost-glow);
   margin-bottom: 16px;
 }
 
-/* Elastyczny układ formularza dodawania */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -84,6 +81,10 @@ input[type="text"]:focus, select:focus {
   border-color: var(--ice-accent);
   box-shadow: 0 0 0 3px var(--frost-glow);
   background: #ffffff;
+}
+
+.search-container {
+  margin-bottom: 16px;
 }
 
 button {
@@ -182,7 +183,6 @@ button:active {
   color: #0f172a;
 }
 
-/* Czerwona odznaka OBOWIĄZKOWY */
 .badge {
   font-size: 0.68rem;
   letter-spacing: 0.04em;
@@ -200,6 +200,12 @@ button:active {
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
+}
+
+.qty-count {
+  font-weight: 700;
+  min-width: 20px;
+  text-align: center;
 }
 
 .btn-qty {
@@ -221,6 +227,52 @@ button:active {
 .btn-qty:hover {
   background: #e2e8f0;
   color: var(--primary);
+}
+
+.btn-buy {
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.btn-delete {
+  background: none;
+  color: #94a3b8;
+  padding: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  box-shadow: none;
+}
+
+.btn-delete:hover {
+  color: #ef4444;
+  background: none;
+}
+
+.shopping-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px dashed #e2e8f0;
+}
+
+.shopping-actions button {
+  flex: 1;
+  padding: 10px 8px;
+  font-size: 0.85rem;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+  box-shadow: 0 2px 8px rgba(100, 116, 139, 0.3);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
 }
 
 .empty-state {
