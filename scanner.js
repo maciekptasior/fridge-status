@@ -16,43 +16,48 @@ function mapCategory(offCategories) {
   return 'Inne';
 }
 
-// Pobieranie danych o produkcie ze sklepu po kodzie EAN/UPC
+// Pobieranie danych o produkcie ze sklepu po kodzie EAN z Open Food Facts API
 async function fetchProductFromOpenFoodFacts(barcode) {
   try {
-    const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json?fields=product_name,product_name_pl,categories_tags`);
+    const url = `https://world.openfoodfacts.org/api/v2/product/${barcode}.json?fields=product_name,product_name_pl,categories_tags`;
+    const response = await fetch(url);
     const data = await response.json();
 
     if (data.status === 1 && data.product) {
       const p = data.product;
-      const name = p.product_name_pl || p.product_name || barcode;
+      // Wybierz polską nazwę, a w przypadku jej braku nazwę ogólną
+      const name = p.product_name_pl || p.product_name || `Produkt ${barcode}`;
       const category = mapCategory(p.categories_tags ? p.categories_tags.join(' ') : '');
 
       return { name, category };
     }
   } catch (err) {
-    console.error("Błąd pobierania danych z Open Food Facts:", err);
+    console.error("Błąd podczas odpytywania API Open Food Facts:", err);
   }
-  return { name: barcode, category: 'Inne' };
+
+  // Jeśli nie znaleziono produktu w bazie
+  return { name: `Kod: ${barcode}`, category: 'Inne' };
 }
 
-// Funkcja wywoływana po udanym przeskanowaniu kodu
+// Funkcja wywoływana po udanym przeskanowaniu kodu EAN
 async function onScanSuccess(barcode) {
   if (navigator.vibrate) navigator.vibrate(100);
 
-  // Wyłączenie kamery
+  // Wyłączenie podglądu kamery
   toggleScanner();
 
   const nameInput = document.getElementById('item-name');
-  nameInput.value = "Szukam w bazie...";
+  nameInput.value = "Szukam w bazie Open Food Facts...";
 
-  // Pobranie danych ze sklepu
+  // Pobranie danych o produkcie
   const productData = await fetchProductFromOpenFoodFacts(barcode);
 
+  // Wpisanie wyników do pól formularza
   nameInput.value = productData.name;
   document.getElementById('item-category').value = productData.category;
 }
 
-// Główna funkcja włączająca / wyłączająca skaner
+// Główna funkcja uruchamiająca / zamykająca skaner
 export function toggleScanner() {
   const readerDiv = document.getElementById('reader');
   const scanBtn = document.getElementById('scan-toggle-btn');
@@ -76,8 +81,7 @@ export function toggleScanner() {
         Html5QrcodeSupportedFormats.EAN_13,
         Html5QrcodeSupportedFormats.EAN_8,
         Html5QrcodeSupportedFormats.UPC_A,
-        Html5QrcodeSupportedFormats.UPC_E,
-        Html5QrcodeSupportedFormats.CODE_128
+        Html5QrcodeSupportedFormats.UPC_E
       ]
     };
 
