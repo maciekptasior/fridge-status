@@ -233,8 +233,8 @@ h3 {
   white-space: nowrap;
 }
 
-/* PRECYZYJNE FORMATOWANIE PRZYCISKÓW ILOŚCI (-, +, X) */
-.quantity-controls, .item-actions, div:has(> button:contains("+")) {
+/* FORMATOWANIE KONTROLI DLA OBU ZAKŁADEK (SPIŻARNIA ORAZ DO KUPIENIA) */
+.quantity-controls, .item-actions, div:has(> button:contains("+")), div:has(> button:contains("Kupiono")) {
   display: inline-flex !important;
   flex-direction: row !important;
   align-items: center !important;
@@ -243,40 +243,39 @@ h3 {
   flex-shrink: 0 !important;
 }
 
+/* Przyciski w wierszu produktu (-, +, X, Kupiono) */
 .quantity-controls button,
 .item-actions button,
 .item button {
-  width: 32px !important;
   height: 32px !important;
-  min-width: 32px !important;
-  max-width: 32px !important;
   min-height: 32px !important;
-  max-height: 32px !important;
-  padding: 0 !important;
+  padding: 0 8px !important;
   margin: 0 !important;
   border: 1px solid #cbd5e1 !important;
   background-color: #ffffff !important;
   color: #334155 !important;
   border-radius: 8px !important;
-  font-size: 0.9rem !important;
+  font-size: 0.85rem !important;
   font-weight: 600 !important;
-  line-height: 1 !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   cursor: pointer !important;
-  box-shadow: none !important;
+  white-space: nowrap !important;
 }
 
-.quantity-controls span,
-.item-actions span,
-.item span {
-  font-weight: 600 !important;
-  font-size: 0.9rem !important;
-  min-width: 18px !important;
-  text-align: center !important;
-  display: inline-block !important;
-  color: #1e293b !important;
+/* Przycisk 'Kupiono' w wierszu */
+.btn-buy, button:contains("Kupiono") {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+/* Stylizowanie przycisku X */
+.btn-delete, button:contains("✕"), button:contains("X") {
+  width: 32px !important;
+  min-width: 32px !important;
+  padding: 0 !important;
 }
 
 .badge {
@@ -287,4 +286,41 @@ h3 {
   padding: 2px 6px;
   border-radius: 4px;
   margin-left: 4px;
+}
+
+/* DOLNE PRZYCISKI AKCJI ZBIORCZYCH (Udostępnij listę / Kupiono wszystkie) */
+.bottom-actions, .action-buttons, div:has(> button:contains("Udostępnij")), div:has(> button:contains("Kupiono wszystkie")) {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 8px !important;
+  margin-top: 14px !important;
+  width: 100% !important;
+}
+
+.bottom-actions button,
+.action-buttons button,
+.card > div > button:not(.btn-scan):not(.btn-voice):not([type="submit"]):not(.tab-btn) {
+  flex: 1 !important;
+  padding: 10px 8px !important;
+  border-radius: 8px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  cursor: pointer !important;
+  border: none !important;
+  white-space: nowrap !important;
+}
+
+/* Kolory dla dolnych przycisków */
+button:contains("Udostępnij") {
+  background: #6366f1 !important;
+  color: #ffffff !important;
+}
+
+button:contains("Kupiono wszystkie") {
+  background: #059669 !important;
+  color: #ffffff !important;
 }
