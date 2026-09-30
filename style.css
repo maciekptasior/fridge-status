@@ -1,6 +1,3 @@
-/* ==========================================================================
-   1. ZMIENNE I BAZA
-   ========================================================================== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -9,250 +6,235 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: #a3c9a8;
+  background-color: #b3d4b6;
   color: #1e293b;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  min-height: 100vh;
-  padding: 20px 12px;
+  padding: 20px;
+  position: relative;
 }
 
-.container, body > div {
+/* Główny kontener aplikacji */
+.app-container, .container, main {
   width: 100%;
-  max-width: 440px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  max-width: 480px;
+  margin: 0 auto;
   position: relative;
+  z-index: 1; /* Kontener wyżej niż tło */
 }
 
-/* ==========================================================================
-   2. NAGŁÓWEK I PODWÓJNA LODÓWKA Z TŁA
-   ========================================================================== */
-header, .header {
-  position: relative;
+/* Nagłówek */
+header, .app-header {
   text-align: center;
-  padding-top: 100px; /* Miejsce na wyłaniającą się lodówkę */
-  margin-bottom: -15px; /* Lekkie wsunięcie pod pierwszą kartę */
-  z-index: 1;
+  margin-bottom: 20px;
 }
 
-/* Obrazek lodówki wyciągnięty do góry */
-header img, .header img, .logo img {
-  display: block !important;
-  width: 140px;
-  height: auto;
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
+/* Usuwamy tradycyjne wyświetlanie obrazka z nagłówka */
+header img, .logo-img {
+  display: none !important;
 }
 
-/* Tytuł pod/za lodówką */
-h1, .app-title {
+h1 {
   font-size: 1.8rem;
   font-weight: 800;
   color: #0f172a;
+}
+
+/* Pierwsza karta (formularz) z ikoną lodówki w tle */
+.card:first-of-type {
+  position: relative;
+  overflow: visible;
+}
+
+.card:first-of-type::before {
+  content: "";
+  position: absolute;
+  top: -90px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 180px;
+  background-image: url('icon-512.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: -1; /* Umieszcza lodówkę ZA kartą formularza */
+  mix-blend-mode: multiply; /* Wtapia tło obrazka w #b3d4b6 */
+}
+
+/* Karty sekcji */
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
   position: relative;
   z-index: 1;
-  margin-top: 10px;
 }
 
-/* ==========================================================================
-   3. BIAŁE KARTY
-   ========================================================================== */
-.card, 
-form,
-div:has(> .btn-ean),
-div:has(> input[placeholder*="Nazwa"]) {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  position: relative;
-  z-index: 3;
-}
-
-/* ==========================================================================
-   4. GÓRNE PRZYCISKI (Skanuj EAN / Dodaj głosowo)
-   ========================================================================== */
-.action-buttons, div:has(> button:nth-child(2)) {
-  display: flex !important;
-  flex-direction: row !important;
-  gap: 10px;
+/* Formularz wprowadzania */
+.quick-actions, .form-group {
+  display: flex;
+  gap: 8px;
   margin-bottom: 12px;
 }
 
-.btn-ean, button:nth-child(1) {
-  background-color: #6366f1 !important;
-  color: white !important;
-  border: none;
-  border-radius: 12px;
-  padding: 12px;
-  font-weight: 600;
+.btn-scan, .btn-voice, button {
+  font-family: inherit;
   font-size: 0.9rem;
+}
+
+.btn-scan {
   flex: 1;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
 }
 
-.btn-voice, button:nth-child(2) {
-  background-color: #059669 !important;
-  color: white !important;
-  border: none;
-  border-radius: 12px;
-  padding: 12px;
-  font-weight: 600;
-  font-size: 0.9rem;
+.btn-voice {
   flex: 1;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
-}
-
-/* ==========================================================================
-   5. FORMULARZ DODAWANIA
-   ========================================================================== */
-.add-form, div:has(> input[type="text"]) {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: wrap;
-  gap: 8px;
 }
 
 input[type="text"], select {
-  border: 1px solid #f1f5f9;
-  background-color: #f8fafc;
-  border-radius: 10px;
   padding: 10px 12px;
-  font-size: 0.9rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: #f8fafc;
   outline: none;
 }
 
-input[placeholder*="Nazwa"] {
-  flex: 1 1 180px;
+input[type="text"]:focus, select:focus {
+  border-color: #0284c7;
+  background-color: #ffffff;
 }
 
-select {
-  flex: 0 0 90px;
+.form-group input[type="text"] {
+  flex: 2;
 }
 
-.btn-add, button:has-text("Dodaj") {
-  background-color: #0284c7 !important;
-  color: white !important;
+.form-group select {
+  flex: 1;
+}
+
+button[type="submit"], .btn-add {
+  background: #0284c7;
+  color: #ffffff;
   border: none;
-  border-radius: 10px;
   padding: 10px 16px;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
 }
 
-.checkbox-label, label:has(input[type="checkbox"]) {
+.checkbox-label {
   display: flex;
   align-items: center;
-  gap: 6px;
-  width: 100%;
-  margin-top: 4px;
-  font-size: 0.85rem;
-  color: #64748b;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #475569;
+  cursor: pointer;
 }
 
-/* ==========================================================================
-   6. ZAKŁADKI (Spiżarnia / Do kupienia)
-   ========================================================================== */
-.tabs-container, .tabs, div:has(> .tab) {
-  display: flex !important;
-  background-color: #e2e8f0;
-  padding: 4px;
+/* Zakładki Spiżarnia / Do kupienia */
+.tabs, nav.tabs, div[role="tablist"] {
+  display: flex;
+  background: #e2e8f0;
   border-radius: 12px;
-  margin: 6px 0;
+  padding: 4px;
+  margin-bottom: 16px;
+  gap: 4px;
 }
 
-.tab, .tabs button {
+.tabs button, .tab-btn, .tab {
   flex: 1;
+  padding: 10px 14px;
   border: none;
   background: transparent;
-  padding: 8px 12px;
   border-radius: 8px;
   font-weight: 600;
   color: #64748b;
   cursor: pointer;
-  font-size: 0.9rem;
+  transition: all 0.2s ease;
 }
 
-.tab.active, .tabs button.active {
-  background: #ffffff !important;
-  color: #0f172a !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+.tabs button.active, .tab-btn.active, .tab.active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
-/* ==========================================================================
-   7. WYSZUKIWARKA
-   ========================================================================== */
-.search-bar, input[placeholder*="Szukaj"] {
+/* Pole wyszukiwania */
+.search-box, input[placeholder*="Szukaj"] {
   width: 100%;
-  max-width: 220px;
-  background-color: #ffffff !important;
-  border: none !important;
-  border-radius: 10px !important;
-  padding: 8px 12px !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  margin-bottom: 12px;
 }
 
-/* ==========================================================================
-   8. LISTA PRODUKTÓW I PRZYCISKI ILOŚCI (PRZYWRÓCENIE UKŁADU POZIOMEGO)
-   ========================================================================== */
-.category-title, h2, h3 {
-  color: #0284c7;
-  font-size: 0.85rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  margin: 14px 0 8px 0;
+/* Przyciski akcji na dole */
+.action-buttons, .bottom-actions {
   display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.action-buttons button, .card button:not(.btn-scan):not(.btn-voice):not([type="submit"]):not(.tab-btn) {
+  padding: 8px 14px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-.product-row, div:has(> .badge-required) {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  padding: 8px 0;
+.action-buttons button:hover, .card button:not(.btn-scan):not(.btn-voice):not([type="submit"]):not(.tab-btn):hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+/* Listy produktów */
+h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #0284c7;
+  margin: 16px 0 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
   border-bottom: 1px solid #f8fafc;
 }
 
-/* Kontrolki po prawej stronie (ilość i usuwanie) */
-.quantity-controls, div:has(> button:contains("+")) {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  gap: 4px !important;
-}
-
-/* Przyciski przy produktach: -, +, x */
-.quantity-controls button, 
-div:has(> button:contains("+")) button {
-  width: 28px !important;
-  height: 28px !important;
-  min-width: 28px !important;
-  padding: 0 !important;
-  background-color: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  color: #334155 !important;
-  border-radius: 6px !important;
-  font-size: 0.85rem !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer;
-}
-
-.badge-required, .badge {
-  background-color: #fee2e2;
-  color: #ef4444;
+.badge {
+  background: #fee2e2;
+  color: #dc2626;
   font-size: 0.65rem;
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 4px;
-  margin-left: 6px;
 }
