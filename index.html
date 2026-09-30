@@ -4,294 +4,319 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Domowa Spiżarnia</title>
-   <link rel="stylesheet" href="style.css">
-  
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
-
-  <!-- PWA Config -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2563eb">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Spiżarnia">
-<link rel="apple-touch-icon" href="icon-192.png">
-
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <div class="container">
-    <h1>Domowa Spiżarnia Online 🛒</h1>
+    <h1>Domowa Spiżarnia 🛒</h1>
 
-   <div class="card">
-  <form id="add-form">
-    <div class="form-group">
-      <input type="text" id="item-name" placeholder="Nazwa produktu..." required>
-      <select id="item-category" required>
-        <option value="Nabiał">Nabiał</option>
-        <option value="Pieczywo">Pieczywo</option>
-        <option value="Mięso">Mięso</option>
-        <option value="Warzywa i Owoce">Warzywa i Owoce</option>
-        <option value="Spiżarnia / Suche">Spiżarnia / Suche</option>
-        <option value="Inne" selected>Inne</option>
-      </select>
-      <button type="submit">Dodaj</button>
+    <!-- Formularz dodawania produktu -->
+    <div class="card">
+      <form id="add-form" onsubmit="addItem(event)">
+        <div class="form-group">
+          <input type="text" id="item-name" placeholder="Nazwa produktu..." list="suggested-items" required autocomplete="off">
+          <datalist id="suggested-items">
+            <option value="Mleko">
+            <option value="Chleb">
+            <option value="Masło">
+            <option value="Jajka">
+            <option value="Ser żółty">
+            <option value="Szynka">
+            <option value="Pomidory">
+            <option value="Woda">
+          </datalist>
+
+          <select id="item-category" required>
+            <option value="Nabiał">Nabiał</option>
+            <option value="Pieczywo">Pieczywo</option>
+            <option value="Mięso">Mięso</option>
+            <option value="Warzywa i Owoce">Warzywa i Owoce</option>
+            <option value="Spiżarnia / Suche">Spiżarnia / Suche</option>
+            <option value="Inne" selected>Inne</option>
+          </select>
+
+          <button type="submit">Dodaj</button>
+        </div>
+
+        <label class="checkbox-label">
+          <input type="checkbox" id="item-musthave">
+          <span>Produkt obowiązkowy</span>
+        </label>
+      </form>
     </div>
-    <label class="checkbox-label">
-      <input type="checkbox" id="item-musthave"> Produkt obowiązkowy
-    </label>
-  </form>
-</div>
 
+    <!-- Zakładki -->
     <div class="tabs">
-      <div class="tab active" onclick="switchTab('pantry')">Spiżarnia</div>
-      <div class="tab" onclick="switchTab('shopping')">Do Kupienia (<span id="buy-count">0</span>)</div>
+      <div class="tab active" id="tab-pantry" onclick="switchTab('pantry')">Spiżarnia</div>
+      <div class="tab" id="tab-shopping" onclick="switchTab('shopping')">Do kupienia (0)</div>
     </div>
 
-    <div class="card" id="view-pantry">
-      <div id="pantry-list">Ładowanie danych z bazy...</div>
+    <!-- Pasek wyszukiwania -->
+    <div class="search-container">
+      <input type="text" id="search-input" placeholder="🔍 Szukaj produktu..." oninput="onSearchInput()">
     </div>
 
-    <div class="card" id="view-shopping" style="display: none;">
-      <div id="shopping-list">Ładowanie danych z bazy...</div>
+    <!-- Kontener na listy -->
+    <div class="card">
+      <div id="pantry-list"></div>
+      <div id="shopping-list" style="display: none;"></div>
+
+      <!-- Akcje zbiorcze dla listy zakupów -->
+      <div id="shopping-actions" class="shopping-actions" style="display: none;">
+        <button class="btn-secondary" onclick="shareShoppingList()">📤 Udostępnij listę</button>
+        <button class="btn-success" onclick="buyAllShoppingItems()">✅ Kupiono wszystkie</button>
+      </div>
     </div>
   </div>
 
-  <script>
-    // 1. Podmień poniższe dane na swoje z konsoli Firebase:
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+
+    // Konfiguracja Firebase — Uzupełnij swoimi danymi
     const firebaseConfig = {
-      apiKey: "AIzaSyCSUj5YjW9A261sHSU8PTQL0jaqWjlg16Q",
-      authDomain: "fridge-status-aa96a.firebaseapp.com",
-      databaseURL: "https://fridge-status-aa96a-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "fridge-status-aa96a",
-      storageBucket: "fridge-status-aa96a.firebasestorage.app",
-      messagingSenderId: "417870352083",
-      appId: "1:417870352083:web:2bfed85ca7f944de030e26"
+      apiKey: "TWOJE_API_KEY",
+      authDomain: "TWOJ_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://TWOJ_PROJECT_ID-default-rtdb.firebaseio.com",
+      projectId: "TWOJ_PROJECT_ID",
+      storageBucket: "TWOJ_PROJECT_ID.appspot.com",
+      messagingSenderId: "TWOJ_SENDER_ID",
+      appId: "TWOJ_APP_ID"
     };
 
-    // Inicjalizacja Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const itemsRef = db.ref('pantry_items');
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
+    // Rejestracja Service Workera
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('Service Worker zarejestrowany:', reg.scope))
+        .catch(err => console.error('Błąd rejestracji SW:', err));
+    }
+
+    // Inicjalizacja Powiadomień Firebase Messaging
+    try {
+      const messaging = getMessaging(app);
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          getToken(messaging, { vapidKey: 'TWÓJ_PUBLICZNY_KLUCZ_VAPID' })
+            .then(currentToken => {
+              if (currentToken) {
+                console.log('FCM Token:', currentToken);
+              }
+            }).catch(err => console.log('Błąd podczas pobierania tokena:', err));
+        }
+      });
+
+      onMessage(messaging, (payload) => {
+        console.log('Otrzymano wiadomość na pierwszym planie: ', payload);
+        alert(`${payload.notification.title}: ${payload.notification.body}`);
+      });
+    } catch (e) {
+      console.log('Firebase Messaging nieobsługiwany lub nieskonfigurowany.');
+    }
+
+    // Stan aplikacji
     let items = [];
+    let activeTab = 'pantry';
+    let searchQuery = '';
 
-    // Nasłuchiwanie zmian w bazie danych w czasie rzeczywistym
-    itemsRef.on('value', (snapshot) => {
+    const CATEGORY_ICONS = {
+      'Nabiał': '🧀',
+      'Pieczywo': '🥖',
+      'Mięso': '🥩',
+      'Warzywa i Owoce': '🥦',
+      'Spiżarnia / Suche': '🍝',
+      'Inne': '📦'
+    };
+
+    // Subskrypcja bazy danych na żywo
+    const itemsRef = ref(db, 'items');
+    onValue(itemsRef, (snapshot) => {
       const data = snapshot.val();
       items = [];
       if (data) {
-        Object.keys(data).forEach(key => {
+        for (const key in data) {
           items.push({ firebaseId: key, ...data[key] });
-        });
+        }
       }
       render();
     });
 
-    function addItem(e) {
-      e.preventDefault();
-  const name = document.getElementById('item-name').value.trim();
-  const category = document.getElementById('item-category').value;
-  const mustHave = document.getElementById('item-musthave').checked;
-  if (!name) return;
-
-  // Zapis do Firebase z uwzględnieniem kategorii
-  itemsRef.push({
-    name: name,
-    category: category,
-    qty: 1,
-    mustHave: mustHave
-  });
-
-  document.getElementById('add-form').reset();
-    }
-
-    function updateQty(firebaseId, delta) {
-      const item = items.find(i => i.firebaseId === firebaseId);
-      if (item) {
-        const newQty = Math.max(0, item.qty + delta);
-        db.ref('pantry_items/' + firebaseId).update({ qty: newQty });
-      }
-    }
-
-    function removeItem(firebaseId) {
-      db.ref('pantry_items/' + firebaseId).remove();
-    }
-
-    function switchTab(tab) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      if (tab === 'pantry') {
-        document.querySelectorAll('.tab')[0].classList.add('active');
-        document.getElementById('view-pantry').style.display = 'block';
-        document.getElementById('view-shopping').style.display = 'none';
-      } else {
-        document.querySelectorAll('.tab')[1].classList.add('active');
-        document.getElementById('view-pantry').style.display = 'none';
-        document.getElementById('view-shopping').style.display = 'block';
-      }
-    }
-
-function renderGroupedList(listItems, containerElement) {
-  if (listItems.length === 0) {
-    containerElement.innerHTML = '<div class="empty-state">Brak produktów.</div>';
-    return;
-  }
-
-  // Grupowanie obiektów według klucza "category"
-  const grouped = listItems.reduce((acc, item) => {
-    const cat = item.category || 'Inne';
-    if (!acc[cat]) acc[cat] = [];
-    acc[cat].push(item);
-    return acc;
-  }, {});
-
-  // Generowanie HTML z nagłówkami kategorii
-  let html = '';
-  for (const [categoryName, categoryItems] of Object.entries(grouped)) {
-    html += `<h3 style="margin: 16px 0 8px 0; font-size: 0.95rem; color: #64748b; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px;">${categoryName}</h3>`;
-    
-    html += categoryItems.map(item => `
-      <div class="item">
-        <div class="item-info">
-          <strong>${item.name}</strong>
-          ${item.mustHave ? '<span class="badge">OBOWIĄZKOWY</span>' : ''}
-        </div>
-        <div class="controls">
-          <button class="btn-qty" onclick="updateQty('${item.firebaseId}', -1)">-</button>
-          <span>${item.qty}</span>
-          <button class="btn-qty" onclick="updateQty('${item.firebaseId}', 1)">+</button>
-          <button onclick="removeItem('${item.firebaseId}')" style="background:none;color:#94a3b8;padding:4px;margin-left:8px;border:none;cursor:pointer;">✕</button>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  containerElement.innerHTML = html;
-}
-
-function render() {
-  const pantryList = document.getElementById('pantry-list');
-  const shoppingList = document.getElementById('shopping-list');
-  const toBuy = items.filter(i => i.qty === 0);
-
-  document.getElementById('buy-count').innerText = toBuy.length;
-
-  // Renderowanie Spiżarni oraz Listy Zakupów z podziałem na kategorie
-  renderGroupedList(items, pantryList);
-  renderGroupedList(toBuy, shoppingList);
-}
-
-    document.getElementById('add-form').addEventListener('submit', addItem);
-
-    // Inicjalizacja modułu Messaging
-const messaging = firebase.messaging();
-
-// Funkcja prosząca o zgodę i pobierająca token FCM
-async function requestNotificationPermission() {
-  try {
-    const permission = await Notification.requestPermission();
-    if (permission === 'granted') {
-      console.log('Zgoda na powiadomienia przyznana.');
+    // Przełączanie zakładek
+    window.switchTab = function(tab) {
+      activeTab = tab;
+      document.getElementById('tab-pantry').classList.toggle('active', tab === 'pantry');
+      document.getElementById('tab-shopping').classList.toggle('active', tab === 'shopping');
       
-      // Pobranie tokenu rejestracyjnego urządzenia
-      const currentToken = await messaging.getToken({ 
-        vapidKey: 'TWÓJ_WYGENEROWANY_KLUCZ_VAPID' 
+      document.getElementById('pantry-list').style.display = tab === 'pantry' ? 'block' : 'none';
+      document.getElementById('shopping-list').style.display = tab === 'shopping' ? 'block' : 'none';
+      document.getElementById('shopping-actions').style.display = tab === 'shopping' ? 'flex' : 'none';
+      
+      render();
+    };
+
+    // Wyszukiwarka
+    window.onSearchInput = function() {
+      searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
+      render();
+    };
+
+    // Smart Dodawanie (zwiększa ilość jeśli produkt istnieje)
+    window.addItem = function(event) {
+      event.preventDefault();
+      
+      const nameInput = document.getElementById('item-name');
+      const categorySelect = document.getElementById('item-category');
+      const mustHaveCheckbox = document.getElementById('item-musthave');
+
+      const name = nameInput.value.trim();
+      const category = categorySelect.value;
+      const mustHave = mustHaveCheckbox.checked;
+
+      if (!name) return;
+
+      const existingItem = items.find(i => i.name.toLowerCase() === name.toLowerCase());
+
+      if (existingItem) {
+        const itemRef = ref(db, `items/${existingItem.firebaseId}`);
+        update(itemRef, {
+          qty: (existingItem.qty || 0) + 1,
+          category: category,
+          mustHave: mustHave
+        });
+      } else {
+        push(ref(db, 'items'), {
+          name: name,
+          category: category,
+          mustHave: mustHave,
+          qty: 1,
+          createdAt: Date.now()
+        });
+      }
+
+      nameInput.value = '';
+      mustHaveCheckbox.checked = false;
+    };
+
+    // Zmiana ilości
+    window.updateQty = function(id, change) {
+      const item = items.find(i => i.firebaseId === id);
+      if (!item) return;
+
+      const newQty = Math.max(0, (item.qty || 0) + change);
+      update(ref(db, `items/${id}`), { qty: newQty });
+    };
+
+    // Oznaczenie jako kupione z poziomu listy zakupów
+    window.markAsBought = function(id) {
+      update(ref(db, `items/${id}`), { qty: 1 });
+    };
+
+    // Usuwanie trwale z bazy
+    window.removeItem = function(id) {
+      remove(ref(db, `items/${id}`));
+    };
+
+    // Kupienie wszystkich produktów z listy zakupów
+    window.buyAllShoppingItems = function() {
+      const shoppingItems = items.filter(i => (i.qty || 0) === 0);
+      if (shoppingItems.length === 0) return;
+
+      if (confirm(`Czy na pewno chcesz oznaczyć wszystkie ${shoppingItems.length} produkty jako kupione?`)) {
+        shoppingItems.forEach(item => {
+          update(ref(db, `items/${item.firebaseId}`), { qty: 1 });
+        });
+      }
+    };
+
+    // Udostępnianie listy zakupów (WhatsApp/SMS/Schowek)
+    window.shareShoppingList = function() {
+      const shoppingItems = items.filter(i => (i.qty || 0) === 0);
+      if (shoppingItems.length === 0) {
+        alert("Lista zakupów jest pusta!");
+        return;
+      }
+
+      let text = "🛒 *Lista Zakupów:*\n";
+      shoppingItems.forEach((item, index) => {
+        text += `${index + 1}. ${item.name}${item.mustHave ? ' ⚠️ [OBOWIĄZKOWY]' : ''}\n`;
       });
-      
-      if (currentToken) {
-        console.log('FCM Token urządzenia:', currentToken);
-        // Zapisz token w Firebase Realtime Database pod węzłem 'fcm_tokens'
-        saveTokenToDatabase(currentToken);
+
+      if (navigator.share) {
+        navigator.share({ title: 'Lista Zakupów', text: text })
+          .catch(err => console.log('Anulowano udostępnianie:', err));
       } else {
-        console.log('Brak dostępnego tokenu. Wygeneruj nowy.');
+        navigator.clipboard.writeText(text).then(() => {
+          alert("Skopiowano listę zakupów do schowka!");
+        });
       }
-    } else {
-      console.log('Użytkownik odrzucił zgodę na powiadomienia.');
+    };
+
+    // Główna funkcja renderująca
+    function render() {
+      // Filtrowanie produktów na podstawie wyszukiwarki
+      const filteredItems = items.filter(i => i.name.toLowerCase().includes(searchQuery));
+
+      const pantryItems = filteredItems.filter(i => (i.qty || 0) > 0);
+      const shoppingItems = filteredItems.filter(i => (i.qty || 0) === 0);
+
+      // Aktualizacja licznika w zakładce
+      const totalShoppingCount = items.filter(i => (i.qty || 0) === 0).length;
+      document.getElementById('tab-shopping').textContent = `Do kupienia (${totalShoppingCount})`;
+
+      // Renderowanie Spiżarni
+      renderList(pantryItems, document.getElementById('pantry-list'), 'pantry');
+
+      // Renderowanie Listy Zakupów
+      renderList(shoppingItems, document.getElementById('shopping-list'), 'shopping');
     }
-  } catch (err) {
-    console.error('Błąd podczas uzyskiwania zgody na powiadomienia:', err);
-  }
-}
 
-// Zapis tokenu domownika do bazy danych
-function saveTokenToDatabase(token) {
-  // Możesz zapisać token pod unikalnym kluczem
-  const tokenRef = db.ref('fcm_tokens/' + token.replace(/[.#$/[\]]/g, "_"));
-  tokenRef.set({
-    token: token,
-    updatedAt: Date.now()
-  });
-}
+    function renderList(listItems, containerElement, mode) {
+      if (listItems.length === 0) {
+        containerElement.innerHTML = `<div class="empty-state">${searchQuery ? 'Brak wyników wyszukiwania.' : 'Brak produktów w tej sekcji.'}</div>`;
+        return;
+      }
 
-// Obsługa wiadomości, gdy aplikacja jest OTWARTA (na pierwszym planie)
-messaging.onMessage((payload) => {
-  console.log('Wiadomość odebrana na pierwszym planie:', payload);
-  alert(`${payload.notification.title}\n${payload.notification.body}`);
-});
+      // Grupowanie wg kategorii
+      const grouped = listItems.reduce((acc, item) => {
+        const cat = item.category || 'Inne';
+        if (!acc[cat]) acc[cat] = [];
+        acc[cat].push(item);
+        return acc;
+      }, {});
 
-// Wywołaj funkcję (np. po kliknięciu przycisku w interfejsie "Włącz powiadomienia")
- requestNotificationPermission();
+      let html = '';
+      for (const [categoryName, categoryItems] of Object.entries(grouped)) {
+        const icon = CATEGORY_ICONS[categoryName] || '📦';
+        html += `<h3>${icon} ${categoryName}</h3>`;
 
-    // Mapowanie kategorii na ikony (emoji)
-const CATEGORY_ICONS = {
-  'Nabiał': '🧀',
-  'Pieczywo': '🥖',
-  'Mięso': '🥩',
-  'Warzywa i Owoce': '🥦',
-  'Spiżarnia / Suche': 'Ryz', // lub np. 🍝 / 🥫
-  'Inne': '📦'
-};
+        html += categoryItems.map(item => `
+          <div class="item">
+            <div class="item-info">
+              <strong>${item.name}</strong>
+              ${item.mustHave ? '<span class="badge">OBOWIĄZKOWY</span>' : ''}
+            </div>
+            <div class="controls">
+              ${mode === 'pantry' ? `
+                <button class="btn-qty" onclick="updateQty('${item.firebaseId}', -1)">-</button>
+                <span class="qty-count">${item.qty}</span>
+                <button class="btn-qty" onclick="updateQty('${item.firebaseId}', 1)">+</button>
+              ` : `
+                <button class="btn-buy" onclick="markAsBought('${item.firebaseId}')">✅ Kupiono</button>
+              `}
+              <button class="btn-delete" onclick="removeItem('${item.firebaseId}')" title="Usuń z bazy">✕</button>
+            </div>
+          </div>
+        `).join('');
+      }
 
-function renderGroupedList(listItems, containerElement) {
-  if (listItems.length === 0) {
-    containerElement.innerHTML = '<div class="empty-state">Brak produktów.</div>';
-    return;
-  }
-
-  // Grupowanie obiektów według kategorii
-  const grouped = listItems.reduce((acc, item) => {
-    const cat = item.category || 'Inne';
-    if (!acc[cat]) acc[cat] = [];
-    acc[cat].push(item);
-    return acc;
-  }, {});
-
-  let html = '';
-  for (const [categoryName, categoryItems] of Object.entries(grouped)) {
-    // Pobranie ikony przypisanej do kategorii (lub domyślnej 📦)
-    const icon = CATEGORY_ICONS[categoryName] || '📦';
-    
-    html += `<h3>${icon} ${categoryName}</h3>`;
-    
-    html += categoryItems.map(item => `
-      <div class="item">
-        <div class="item-info">
-          <strong>${item.name}</strong>
-          ${item.mustHave ? '<span class="badge">OBOWIĄZKOWY</span>' : ''}
-        </div>
-        <div class="controls">
-          <button class="btn-qty" onclick="updateQty('${item.firebaseId}', -1)">-</button>
-          <span>${item.qty}</span>
-          <button class="btn-qty" onclick="updateQty('${item.firebaseId}', 1)">+</button>
-          <button onclick="removeItem('${item.firebaseId}')" style="background:none;color:#94a3b8;padding:4px;margin-left:8px;border:none;cursor:pointer;">✕</button>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  containerElement.innerHTML = html;
-}
-    
+      containerElement.innerHTML = html;
+    }
   </script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('Service Worker zarejestrowany!'))
-        .catch(err => console.error('Błąd rejestracji Service Workera:', err));
-    });
-  }
-</script>
 </body>
 </html>
