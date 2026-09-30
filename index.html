@@ -31,6 +31,7 @@
       <select id="item-category" required>
         <option value="Nabiał">Nabiał</option>
         <option value="Pieczywo">Pieczywo</option>
+        <option value="Mięso">Mięso</option>
         <option value="Warzywa i Owoce">Warzywa i Owoce</option>
         <option value="Spiżarnia / Suche">Spiżarnia / Suche</option>
         <option value="Inne" selected>Inne</option>
@@ -38,7 +39,7 @@
       <button type="submit">Dodaj</button>
     </div>
     <label class="checkbox-label">
-      <input type="checkbox" id="item-musthave"> Produkt obowiązkowy (Must-Have)
+      <input type="checkbox" id="item-musthave"> Produkt obowiązkowy
     </label>
   </form>
 </div>
@@ -154,7 +155,7 @@ function renderGroupedList(listItems, containerElement) {
       <div class="item">
         <div class="item-info">
           <strong>${item.name}</strong>
-          ${item.mustHave ? '<span class="badge">MUST HAVE</span>' : ''}
+          ${item.mustHave ? '<span class="badge">OBOWIĄZKOWY</span>' : ''}
         </div>
         <div class="controls">
           <button class="btn-qty" onclick="updateQty('${item.firebaseId}', -1)">-</button>
@@ -231,6 +232,56 @@ messaging.onMessage((payload) => {
 
 // Wywołaj funkcję (np. po kliknięciu przycisku w interfejsie "Włącz powiadomienia")
  requestNotificationPermission();
+
+    // Mapowanie kategorii na ikony (emoji)
+const CATEGORY_ICONS = {
+  'Nabiał': '🧀',
+  'Pieczywo': '🥖',
+  'Mięso': '🥩',
+  'Warzywa i Owoce': '🥦',
+  'Spiżarnia / Suche': 'Ryz', // lub np. 🍝 / 🥫
+  'Inne': '📦'
+};
+
+function renderGroupedList(listItems, containerElement) {
+  if (listItems.length === 0) {
+    containerElement.innerHTML = '<div class="empty-state">Brak produktów.</div>';
+    return;
+  }
+
+  // Grupowanie obiektów według kategorii
+  const grouped = listItems.reduce((acc, item) => {
+    const cat = item.category || 'Inne';
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(item);
+    return acc;
+  }, {});
+
+  let html = '';
+  for (const [categoryName, categoryItems] of Object.entries(grouped)) {
+    // Pobranie ikony przypisanej do kategorii (lub domyślnej 📦)
+    const icon = CATEGORY_ICONS[categoryName] || '📦';
+    
+    html += `<h3>${icon} ${categoryName}</h3>`;
+    
+    html += categoryItems.map(item => `
+      <div class="item">
+        <div class="item-info">
+          <strong>${item.name}</strong>
+          ${item.mustHave ? '<span class="badge">MUST HAVE</span>' : ''}
+        </div>
+        <div class="controls">
+          <button class="btn-qty" onclick="updateQty('${item.firebaseId}', -1)">-</button>
+          <span>${item.qty}</span>
+          <button class="btn-qty" onclick="updateQty('${item.firebaseId}', 1)">+</button>
+          <button onclick="removeItem('${item.firebaseId}')" style="background:none;color:#94a3b8;padding:4px;margin-left:8px;border:none;cursor:pointer;">✕</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  containerElement.innerHTML = html;
+}
     
   </script>
   <script>
