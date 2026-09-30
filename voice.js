@@ -3,7 +3,7 @@
 // Lista słów łączących / szumu, które mają być ignorowane przy dzieleniu wypowiedzi
 const STOP_WORDS = [
   'trzeba', 'kupić', 'dodaj', 'do', 'listy', 'poproszę', 'muszę', 'kup',
-  'i', 'oraz', 'także', 'również', 'może', 'jeszcze', 'oraz'
+  'i', 'oraz', 'także', 'również', 'może', 'jeszcze', 'oraz', 'tylko'
 ];
 
 // Słownik do podstawowego dopasowywania kategorii
