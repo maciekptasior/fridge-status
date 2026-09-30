@@ -23,6 +23,14 @@
     .controls { display: flex; align-items: center; gap: 8px; }
     .btn-qty { width: 28px; height: 28px; border-radius: 4px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: bold; color: #334155; }
     .empty-state { text-align: center; color: #64748b; padding: 20px; }
+    select {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: white;
+  color: #1e293b;
+  font-size: 0.9rem;
+}
   </style>
   
   <!-- Firebase SDK -->
@@ -43,17 +51,24 @@
   <div class="container">
     <h1>Domowa Spiżarnia Online 🛒</h1>
 
-    <div class="card">
-      <form id="add-form">
-        <div class="form-group">
-          <input type="text" id="item-name" placeholder="Nazwa produktu..." required>
-          <button type="submit">Dodaj</button>
-        </div>
-        <label class="checkbox-label">
-          <input type="checkbox" id="item-musthave"> Produkt obowiązkowy (Must-Have)
-        </label>
-      </form>
+   <div class="card">
+  <form id="add-form">
+    <div class="form-group">
+      <input type="text" id="item-name" placeholder="Nazwa produktu..." required>
+      <select id="item-category" required>
+        <option value="Nabiał">Nabiał</option>
+        <option value="Pieczywo">Pieczywo</option>
+        <option value="Warzywa i Owoce">Warzywa i Owoce</option>
+        <option value="Spiżarnia / Suche">Spiżarnia / Suche</option>
+        <option value="Inne" selected>Inne</option>
+      </select>
+      <button type="submit">Dodaj</button>
     </div>
+    <label class="checkbox-label">
+      <input type="checkbox" id="item-musthave"> Produkt obowiązkowy (Must-Have)
+    </label>
+  </form>
+</div>
 
     <div class="tabs">
       <div class="tab active" onclick="switchTab('pantry')">Spiżarnia</div>
@@ -102,18 +117,20 @@
 
     function addItem(e) {
       e.preventDefault();
-      const name = document.getElementById('item-name').value.trim();
-      const mustHave = document.getElementById('item-musthave').checked;
-      if (!name) return;
+  const name = document.getElementById('item-name').value.trim();
+  const category = document.getElementById('item-category').value;
+  const mustHave = document.getElementById('item-musthave').checked;
+  if (!name) return;
 
-      // Zapis nowego produktu do Firebase
-      itemsRef.push({
-        name: name,
-        qty: 1,
-        mustHave: mustHave
-      });
+  // Zapis do Firebase z uwzględnieniem kategorii
+  itemsRef.push({
+    name: name,
+    category: category,
+    qty: 1,
+    mustHave: mustHave
+  });
 
-      document.getElementById('add-form').reset();
+  document.getElementById('add-form').reset();
     }
 
     function updateQty(firebaseId, delta) {
@@ -141,48 +158,55 @@
       }
     }
 
-    function render() {
-      const pantryList = document.getElementById('pantry-list');
-      const shoppingList = document.getElementById('shopping-list');
-      const toBuy = items.filter(i => i.qty === 0);
+function renderGroupedList(listItems, containerElement) {
+  if (listItems.length === 0) {
+    containerElement.innerHTML = '<div class="empty-state">Brak produktów.</div>';
+    return;
+  }
 
-      document.getElementById('buy-count').innerText = toBuy.length;
+  // Grupowanie obiektów według klucza "category"
+  const grouped = listItems.reduce((acc, item) => {
+    const cat = item.category || 'Inne';
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(item);
+    return acc;
+  }, {});
 
-      // Render Spiżarnia
-      if (items.length === 0) {
-        pantryList.innerHTML = '<div class="empty-state">Brak produktów w bazie. Dodaj pierwszy!</div>';
-      } else {
-        pantryList.innerHTML = items.map(item => `
-          <div class="item">
-            <div class="item-info">
-              <strong>${item.name}</strong>
-              ${item.mustHave ? '<span class="badge">MUST HAVE</span>' : ''}
-            </div>
-            <div class="controls">
-              <button class="btn-qty" onclick="updateQty('${item.firebaseId}', -1)">-</button>
-              <span>${item.qty}</span>
-              <button class="btn-qty" onclick="updateQty('${item.firebaseId}', 1)">+</button>
-              <button onclick="removeItem('${item.firebaseId}')" style="background:none;color:#94a3b8;padding:4px;margin-left:8px;border:none;cursor:pointer;">✕</button>
-            </div>
-          </div>
-        `).join('');
-      }
+  // Generowanie HTML z nagłówkami kategorii
+  let html = '';
+  for (const [categoryName, categoryItems] of Object.entries(grouped)) {
+    html += `<h3 style="margin: 16px 0 8px 0; font-size: 0.95rem; color: #64748b; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px;">${categoryName}</h3>`;
+    
+    html += categoryItems.map(item => `
+      <div class="item">
+        <div class="item-info">
+          <strong>${item.name}</strong>
+          ${item.mustHave ? '<span class="badge">MUST HAVE</span>' : ''}
+        </div>
+        <div class="controls">
+          <button class="btn-qty" onclick="updateQty('${item.firebaseId}', -1)">-</button>
+          <span>${item.qty}</span>
+          <button class="btn-qty" onclick="updateQty('${item.firebaseId}', 1)">+</button>
+          <button onclick="removeItem('${item.firebaseId}')" style="background:none;color:#94a3b8;padding:4px;margin-left:8px;border:none;cursor:pointer;">✕</button>
+        </div>
+      </div>
+    `).join('');
+  }
 
-      // Render Lista Zakupów (Ilość = 0)
-      if (toBuy.length === 0) {
-        shoppingList.innerHTML = '<div class="empty-state">Wszystkie produkty są na stanie!</div>';
-      } else {
-        shoppingList.innerHTML = toBuy.map(item => `
-          <div class="item">
-            <div class="item-info">
-              <strong style="color: var(--danger);">${item.name}</strong>
-              ${item.mustHave ? '<span class="badge">MUST HAVE</span>' : ''}
-            </div>
-            <button onclick="updateQty('${item.firebaseId}', 1)">Kupione (+1)</button>
-          </div>
-        `).join('');
-      }
-    }
+  containerElement.innerHTML = html;
+}
+
+function render() {
+  const pantryList = document.getElementById('pantry-list');
+  const shoppingList = document.getElementById('shopping-list');
+  const toBuy = items.filter(i => i.qty === 0);
+
+  document.getElementById('buy-count').innerText = toBuy.length;
+
+  // Renderowanie Spiżarni oraz Listy Zakupów z podziałem na kategorie
+  renderGroupedList(items, pantryList);
+  renderGroupedList(toBuy, shoppingList);
+}
 
     document.getElementById('add-form').addEventListener('submit', addItem);
 
