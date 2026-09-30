@@ -2,6 +2,7 @@ const CACHE_NAME = 'spizarnia-v1';
 const ASSETS = [
   '/',
   '/index.html',
+  '/style.css',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png'
