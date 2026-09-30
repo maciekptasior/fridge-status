@@ -1,18 +1,6 @@
 /* ==========================================================================
-   1. ZMIENNE I USTAWIENIA PODSTAWOWE
+   1. RESET I ZMIENNE
    ========================================================================== */
-:root {
-  --bg-color: #a3c9a8;
-  --card-bg: #ffffff;
-  --text-primary: #1e293b;
-  --text-muted: #64748b;
-  --accent-blue: #0284c7;
-  --accent-purple: #7c3aed;
-  --accent-green: #059669;
-  --border-radius: 16px;
-  --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-}
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -20,309 +8,226 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-primary);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #a3c9a8;
+  color: #1e293b;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  padding: 40px 15px;
   min-height: 100vh;
-  padding: 20px 15px;
 }
 
-.container {
+/* Główny kontener aplikacji */
+body > div, .container {
   width: 100%;
-  max-width: 520px;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  position: relative;
 }
 
 /* ==========================================================================
-   2. NAGŁÓWEK I TŁO Z LODÓWKĄ
+   2. NAGŁÓWEK I LOGO (LODÓWKA W TLE)
    ========================================================================== */
 header, .header {
   position: relative;
   text-align: center;
-  padding: 30px 0 10px 0;
-  margin-bottom: -20px; /* Lekkie wsunięcie pod pierwszą kartę */
+  padding: 20px 0 10px 0;
   z-index: 1;
 }
 
-/* Ukrycie obrazka z pierwszego planu */
-header img, .header img, .logo-img {
-  display: none !important;
-}
-
-/* Tytuł "Domowa Spiżarnia" wkomponowany z tłem */
-h1, .app-title {
-  font-size: 2rem;
-  font-weight: 800;
+/* Tytuł nagłówka */
+h1 {
+  font-size: 2.2rem;
+  font-weight: 900;
   color: #0f172a;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 120px; /* Przestrzeń w środku napisu na wyświetlenie lodówki z tła */
-  position: relative;
-}
-
-/* Wstawienie lodówki jako tło nagłówka */
-header::before, .header::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -60%);
-  width: 130px;
-  height: 130px;
-  background-image: url('fridge.png'); /* Podmień na ścieżkę do swojego pliku PNG/SVG */
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  z-index: -1;
-}
-
-/* ==========================================================================
-   3. KARTY I SEKCJE
-   ========================================================================== */
-.card {
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  padding: 20px;
-  box-shadow: var(--shadow);
+  letter-spacing: -0.5px;
   position: relative;
   z-index: 2;
 }
 
-/* AKCJE / PRZYCISKI GÓRNE */
-.action-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 16px;
+/* Obrazek lodówki wystający zza pierwszej karty */
+header img, .logo img, .header img {
+  display: block !important;
+  width: 100px;
+  height: auto;
+  margin: 0 auto -35px auto; /* Wsuwa lodówkę pod dolną kartę */
+  position: relative;
+  z-index: 1;
 }
 
-.btn-action {
-  border: none;
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-weight: 600;
-  color: #ffffff;
-  cursor: pointer;
+/* ==========================================================================
+   3. KARTY (BIAŁE KONTENERY)
+   ========================================================================== */
+/* Pierwsza karta (formularz) i druga karta (lista) */
+body > div > div:not([class]), 
+.card, 
+form,
+header + div {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 2;
+}
+
+/* ==========================================================================
+   4. PRZYCISKI AKCJI (EAN / GŁOSOWO)
+   ========================================================================== */
+/* Górne przyciski */
+div:has(> button) {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 0.95rem;
-  transition: transform 0.1s ease, opacity 0.2s ease;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
-.btn-action:active {
+button {
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+button:active {
   transform: scale(0.98);
 }
 
-.btn-ean {
+/* Dedykowane kolory przycisków górnych */
+button:nth-child(1) {
   background-color: #6366f1;
+  color: #ffffff;
+  flex: 1;
 }
 
-.btn-voice {
-  background-color: #10b981;
+button:nth-child(2) {
+  background-color: #059669;
+  color: #ffffff;
+  flex: 1;
 }
 
-/* FORMULARZ DODAWANIA */
-.add-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.input-text {
-  flex: 1 1 180px;
-  padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+/* ==========================================================================
+   5. FORMULARZE I POLA WEJŚCIOWE
+   ========================================================================== */
+input[type="text"], select {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   background-color: #f8fafc;
+  font-size: 0.9rem;
   outline: none;
-  font-size: 0.95rem;
 }
 
-.input-text:focus {
-  border-color: var(--accent-blue);
+input[type="text"]:focus, select:focus {
+  border-color: #0284c7;
   background-color: #ffffff;
 }
 
-.select-category {
-  flex: 0 1 120px;
-  padding: 10px 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background-color: #f8fafc;
-  outline: none;
-  font-size: 0.95rem;
+/* Układ formularza dodawania */
+div:has(> input[type="text"]) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
 }
 
-.btn-add {
-  background-color: var(--accent-blue);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-weight: 600;
-  cursor: pointer;
+div:has(> input[type="text"]) input[type="text"] {
+  flex: 2;
+  min-width: 160px;
 }
 
-.checkbox-group {
-  width: 100%;
+div:has(> input[type="text"]) select {
+  flex: 1;
+}
+
+div:has(> input[type="text"]) button {
+  background-color: #0284c7;
+  color: #ffffff;
+  padding: 10px 16px;
+}
+
+/* Checkbox */
+label:has(input[type="checkbox"]) {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 6px;
-  font-size: 0.875rem;
-  color: var(--text-muted);
-}
-
-/* PRZEŁĄCZNIK ZAKŁADEK (Spiżarnia / Do kupienia) */
-.tabs-container {
-  display: flex;
-  background-color: #e2e8f0;
-  padding: 4px;
-  border-radius: 12px;
-}
-
-.tab-btn {
-  flex: 1;
-  border: none;
-  background: transparent;
-  padding: 10px;
-  border-radius: 8px;
-  font-weight: 600;
-  color: var(--text-muted);
+  gap: 6px;
+  width: 100%;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #475569;
   cursor: pointer;
 }
 
-.tab-btn.active {
-  background: #ffffff;
-  color: var(--text-primary);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+/* ==========================================================================
+   6. ZAKŁADKI I WYSZUKIWARKA
+   ========================================================================== */
+/* Kontener przełącznika Spiżarnia / Do kupienia */
+div:has(> button:only-child), .tabs {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
 }
 
-/* WYSZUKIWARKA */
-.search-container {
-  position: relative;
-  max-width: 200px;
-  z-index: 3;
-  margin-bottom: -10px;
-}
-
-.search-input {
+/* Przycisk wyszukiwarki */
+input[placeholder*="Szukaj"], .search-input {
   width: 100%;
-  padding: 8px 12px 8px 32px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background: #ffffff;
-  font-size: 0.9rem;
+  max-width: 220px;
+  margin-bottom: 10px;
+  background-color: #ffffff;
 }
 
-/* LISTA PRODUKTÓW */
-.category-header {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--accent-blue);
+/* ==========================================================================
+   7. LISTA PRODUKTÓW I ELEMENTY ILOŚCI (KONTROLI)
+   ========================================================================== */
+/* Nagłówki kategorialne (Nabiał, Mięso) */
+h2, h3, .category-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #0284c7;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
   margin: 16px 0 8px 0;
   display: flex;
   align-items: center;
   gap: 6px;
-  border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 4px;
 }
 
-.product-item {
+/* Wiersz pojedynczego produktu */
+div:has(> input + button), .product-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 0;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.product-name {
-  font-weight: 600;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Zapewnienie poziomego układu dla przycisków +, -, wartości i usunięcia */
+div:has(> button) {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 6px !important;
 }
 
-.badge-required {
-  background-color: #fee2e2;
-  color: #ef4444;
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
-  text-transform: uppercase;
-}
-
-.quantity-controls {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.btn-qty {
+/* Style przycisków akcji na liście */
+div:has(> button) button {
   width: 32px;
   height: 32px;
-  border: 1px solid #e2e8f0;
-  background-color: #ffffff;
-  border-radius: 6px;
-  display: flex;
+  padding: 0;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  color: var(--text-muted);
-}
-
-.qty-val {
-  font-weight: 600;
-  min-width: 20px;
-  text-align: center;
-}
-
-.btn-remove {
-  width: 32px;
-  height: 32px;
-  border: 1px solid #e2e8f0;
   background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
   border-radius: 6px;
-  color: var(--text-muted);
-  cursor: pointer;
-  margin-left: 4px;
 }
 
-/* ==========================================================================
-   4. RESPONSYWNOŚĆ (MOBILE)
-   ========================================================================== */
-@media (max-width: 480px) {
-  h1, .app-title {
-    gap: 80px;
-    font-size: 1.6rem;
-  }
-  
-  header::before, .header::before {
-    width: 100px;
-    height: 100px;
-  }
-
-  .action-buttons {
-    grid-template-columns: 1fr;
-  }
-  
-  .add-form {
-    flex-direction: column;
-  }
-  
-  .select-category, .btn-add {
-    width: 100%;
-  }
+div:has(> button) span {
+  font-weight: 700;
+  min-width: 16px;
+  text-align: center;
 }
