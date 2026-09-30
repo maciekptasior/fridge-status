@@ -12,8 +12,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 20px;
+  padding: 16px 12px;
   position: relative;
+  overflow-x: hidden;
 }
 
 /* Główny kontener aplikacji */
@@ -22,90 +23,106 @@ body {
   max-width: 480px;
   margin: 0 auto;
   position: relative;
-  z-index: 1; /* Kontener wyżej niż tło */
+  z-index: 1;
 }
 
-/* Nagłówek i logo w tle */
+/* Nagłówek */
 header, .app-header {
   text-align: center;
-  margin-top: 110px; /* Miejsce na lodówkę wyzierającą z tła */
+  margin-top: 100px; /* Miejsce na wychodzącą z tła lodówkę */
   margin-bottom: 20px;
-  position: relative;
 }
 
-/* Ikona lodówki umieszczona W TLE za kartami */
+/* Ukrycie standardowego obrazka w nagłówku, jeśli występuje w HTML */
 header img, .logo-img {
-  width: 160px;
-  height: auto;
-  display: block;
-  position: absolute;
-  top: -120px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: -1; /* Schowana za kartę poniżej */
-  
-  /* Mieszanie kolorów: usuwa kwadratowe tło obrazka i wtapia je idealnie w #b2d8c3 */
-  mix-blend-mode: multiply;
+  display: none !important;
 }
 
 h1 {
-  font-size: 1.8rem;
+  font-size: 1.75rem;
   font-weight: 800;
   color: #0f172a;
+}
+
+/* Pierwsza karta (formularz) z ikoną lodówki umieszczoną w tle */
+.card:first-of-type {
+  position: relative;
+  overflow: visible;
+}
+
+.card:first-of-type::before {
+  content: "";
+  position: absolute;
+  top: -110px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 140px;
+  background-image: url('icon-512.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: -1; /* W tle za kartą */
+  mix-blend-mode: multiply; /* Usuwa kwadratowe tło z obrazka */
 }
 
 /* Karty sekcji */
 .card {
   background: #ffffff;
   border-radius: 16px;
-  padding: 20px;
+  padding: 16px;
   margin-bottom: 16px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
   position: relative;
   z-index: 1;
 }
 
-/* Formularz wprowadzania */
-.quick-actions, .form-group {
+/* Przycisk skanowania i głosowy */
+.quick-actions {
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
 }
 
-.btn-scan, .btn-voice, button {
-  font-family: inherit;
-  font-size: 0.9rem;
+.btn-scan, .btn-voice {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 8px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #ffffff;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .btn-scan {
-  flex: 1;
   background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
-  color: #ffffff;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
 }
 
 .btn-voice {
-  flex: 1;
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #ffffff;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
+}
+
+/* Formularz wprowadzania - dynamiczne dopasowanie do ekranu mobilnego */
+.form-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+  width: 100%;
 }
 
 input[type="text"], select {
   padding: 10px 12px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   background-color: #f8fafc;
   outline: none;
+  box-sizing: border-box;
 }
 
 input[type="text"]:focus, select:focus {
@@ -114,11 +131,13 @@ input[type="text"]:focus, select:focus {
 }
 
 .form-group input[type="text"] {
-  flex: 2;
+  flex: 1 1 180px;
+  min-width: 0;
 }
 
 .form-group select {
-  flex: 1;
+  flex: 1 1 100px;
+  min-width: 0;
 }
 
 button[type="submit"], .btn-add {
@@ -129,13 +148,14 @@ button[type="submit"], .btn-add {
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
+  flex: 0 0 auto;
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #475569;
   cursor: pointer;
 }
@@ -152,14 +172,16 @@ button[type="submit"], .btn-add {
 
 .tabs button, .tab-btn, .tab {
   flex: 1;
-  padding: 10px 14px;
+  padding: 10px 8px;
   border: none;
   background: transparent;
   border-radius: 8px;
   font-weight: 600;
+  font-size: 0.9rem;
   color: #64748b;
   cursor: pointer;
   transition: all 0.2s ease;
+  text-align: center;
 }
 
 .tabs button.active, .tab-btn.active, .tab.active {
@@ -172,38 +194,12 @@ button[type="submit"], .btn-add {
 .search-box, input[placeholder*="Szukaj"] {
   width: 100%;
   margin-bottom: 12px;
+  box-sizing: border-box;
 }
 
-/* Przyciski akcji na dole */
-.action-buttons, .bottom-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 16px;
-  flex-wrap: wrap;
-}
-
-.action-buttons button, .card button:not(.btn-scan):not(.btn-voice):not([type="submit"]):not(.tab-btn) {
-  padding: 8px 14px;
-  border: 1px solid #cbd5e1;
-  background: #f8fafc;
-  color: #334155;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.action-buttons button:hover, .card button:not(.btn-scan):not(.btn-voice):not([type="submit"]):not(.tab-btn):hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
-}
-
-/* Listy produktów */
+/* Listy produktów i kontrolki */
 h3 {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #0284c7;
@@ -216,15 +212,55 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 0;
+  padding: 8px 0;
   border-bottom: 1px solid #f8fafc;
+  gap: 8px;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .badge {
   background: #fee2e2;
   color: #dc2626;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 700;
-  padding: 2px 6px;
+  padding: 2px 5px;
   border-radius: 4px;
+  white-space: nowrap;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* Dolne przyciski akcji */
+.action-buttons, .bottom-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.action-buttons button, .card button:not(.btn-scan):not(.btn-voice):not([type="submit"]):not(.tab-btn) {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
