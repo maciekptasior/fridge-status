@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Domowa Spiżarnia</title>
+  <style>
+    :root { --primary: #2563eb; --danger: #dc2626; --bg: #f8fafc; --card: #ffffff; }
+    body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #1e293b; }
+    .container { max-width: 600px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; text-align: center; }
+    .card { background: var(--card); border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    .form-group { display: flex; gap: 8px; margin-bottom: 12px; }
+    input[type="text"] { flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; }
+    button { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .checkbox-label { display: flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tab { flex: 1; text-align: center; padding: 10px; background: #e2e8f0; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .tab.active { background: var(--primary); color: white; }
+    .item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+    .item-info { display: flex; align-items: center; gap: 8px; }
+    .badge { font-size: 0.75rem; background: #fef3c7; color: #d97706; padding: 2px 6px; border-radius: 4px; border: 1px solid #fcd34d; font-weight: bold; }
+    .controls { display: flex; align-items: center; gap: 8px; }
+    .btn-qty { width: 28px; height: 28px; border-radius: 4px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: bold; color: #334155; }
+    .empty-state { text-align: center; color: #64748b; padding: 20px; }
+  </style>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Domowa Spiżarnia Online 🛒</h1>
+
+    <div class="card">
+      <form id="add-form">
+        <div class="form-group">
+          <input type="text" id="item-name" placeholder="Nazwa produktu..." required>
+          <button type="submit">Dodaj</button>
+        </div>
+        <label class="checkbox-label">
+          <input type="checkbox" id="item-musthave"> Produkt obowiązkowy (Must-Have)
+        </label>
+      </form>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('pantry')">Spiżarnia</div>
+      <div class="tab" onclick="switchTab('shopping')">Do Kupienia (<span id="buy-count">0</span>)</div>
+    </div>
+
+    <div class="card" id="view-pantry">
+      <div id="pantry-list">Ładowanie danych z bazy...</div>
+    </div>
+
+    <div class="card" id="view-shopping" style="display: none;">
+      <div id="shopping-list">Ładowanie danych z bazy...</div>
+    </div>
+  </div>
+
+  <script>
+    // 1. Podmień poniższe dane na swoje z konsoli Firebase:
+    const firebaseConfig = {
+      apiKey: "AIzaSyCSUj5YjW9A261sHSU8PTQL0jaqWjlg16Q",
+      authDomain: "fridge-status-aa96a.firebaseapp.com",
+      databaseURL: "https://fridge-status-aa96a-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "fridge-status-aa96a",
+      storageBucket: "fridge-status-aa96a.firebasestorage.app",
+      messagingSenderId: "417870352083",
+      appId: "1:417870352083:web:2bfed85ca7f944de030e26"
+    };
+
+    // Inicjalizacja Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const itemsRef = db.ref('pantry_items');
+
+    let items = [];
+
+    // Nasłuchiwanie zmian w bazie danych w czasie rzeczywistym
+    itemsRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      items = [];
+      if (data) {
+        Object.keys(data).forEach(key => {
+          items.push({ firebaseId: key, ...data[key] });
+        });
+      }
+      render();
+    });
+
+    function addItem(e) {
+      e.preventDefault();
+      const name = document.getElementById('item-name').value.trim();
+      const mustHave = document.getElementById('item-musthave').checked;
+      if (!name) return;
+
+      // Zapis nowego produktu do Firebase
+      itemsRef.push({
+        name: name,
+        qty: 1,
+        mustHave: mustHave
+      });
+
+      document.getElementById('add-form').reset();
+    }
+
+    function updateQty(firebaseId, delta) {
+      const item = items.find(i => i.firebaseId === firebaseId);
+      if (item) {
+        const newQty = Math.max(0, item.qty + delta);
+        db.ref('pantry_items/' + firebaseId).update({ qty: newQty });
+      }
+    }
+
+    function removeItem(firebaseId) {
+      db.ref('pantry_items/' + firebaseId).remove();
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      if (tab === 'pantry') {
+        document.querySelectorAll('.tab')[0].classList.add('active');
+        document.getElementById('view-pantry').style.display = 'block';
+        document.getElementById('view-shopping').style.display = 'none';
+      } else {
+        document.querySelectorAll('.tab')[1].classList.add('active');
+        document.getElementById('view-pantry').style.display = 'none';
+        document.getElementById('view-shopping').style.display = 'block';
+      }
+    }
+
+    function render() {
+      const pantryList = document.getElementById('pantry-list');
+      const shoppingList = document.getElementById('shopping-list');
+      const toBuy = items.filter(i => i.qty === 0);
+
+      document.getElementById('buy-count').innerText = toBuy.length;
+
+      // Render Spiżarnia
+      if (items.length === 0) {
+        pantryList.innerHTML = '<div class="empty-state">Brak produktów w bazie. Dodaj pierwszy!</div>';
+      } else {
+        pantryList.innerHTML = items.map(item => `
+          <div class="item">
+            <div class="item-info">
+              <strong>${item.name}</strong>
+              ${item.mustHave ? '<span class="badge">MUST HAVE</span>' : ''}
+            </div>
+            <div class="controls">
+              <button class="btn-qty" onclick="updateQty('${item.firebaseId}', -1)">-</button>
+              <span>${item.qty}</span>
+              <button class="btn-qty" onclick="updateQty('${item.firebaseId}', 1)">+</button>
+              <button onclick="removeItem('${item.firebaseId}')" style="background:none;color:#94a3b8;padding:4px;margin-left:8px;border:none;cursor:pointer;">✕</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Render Lista Zakupów (Ilość = 0)
+      if (toBuy.length === 0) {
+        shoppingList.innerHTML = '<div class="empty-state">Wszystkie produkty są na stanie!</div>';
+      } else {
+        shoppingList.innerHTML = toBuy.map(item => `
+          <div class="item">
+            <div class="item-info">
+              <strong style="color: var(--danger);">${item.name}</strong>
+              ${item.mustHave ? '<span class="badge">MUST HAVE</span>' : ''}
+            </div>
+            <button onclick="updateQty('${item.firebaseId}', 1)">Kupione (+1)</button>
+          </div>
+        `).join('');
+      }
+    }
+
+    document.getElementById('add-form').addEventListener('submit', addItem);
+  </script>
+</body>
+</html>
