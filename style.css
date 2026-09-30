@@ -13,6 +13,7 @@ body {
   justify-content: center;
   align-items: flex-start;
   padding: 20px;
+  position: relative;
 }
 
 /* Główny kontener aplikacji */
@@ -20,19 +21,31 @@ body {
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1; /* Kontener wyżej niż tło */
 }
 
-/* Nagłówek i logo */
+/* Nagłówek i logo w tle */
 header, .app-header {
   text-align: center;
+  margin-top: 110px; /* Miejsce na lodówkę wyzierającą z tła */
   margin-bottom: 20px;
+  position: relative;
 }
 
+/* Ikona lodówki umieszczona W TLE za kartami */
 header img, .logo-img {
-  width: 120px;
+  width: 160px;
   height: auto;
   display: block;
-  margin: 0 auto 10px auto;
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -1; /* Schowana za kartę poniżej */
+  
+  /* Mieszanie kolorów: usuwa kwadratowe tło obrazka i wtapia je idealnie w #b2d8c3 */
+  mix-blend-mode: multiply;
 }
 
 h1 {
@@ -48,6 +61,8 @@ h1 {
   padding: 20px;
   margin-bottom: 16px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 1;
 }
 
 /* Formularz wprowadzania */
@@ -159,7 +174,7 @@ button[type="submit"], .btn-add {
   margin-bottom: 12px;
 }
 
-/* Ogólne style dla przycisków akcji na dole */
+/* Przyciski akcji na dole */
 .action-buttons, .bottom-actions {
   display: flex;
   gap: 8px;
