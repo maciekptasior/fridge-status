@@ -1,173 +1,150 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-
-:root {
-  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-  --card-bg: rgba(255, 255, 255, 0.92);
-  --card-border: rgba(255, 255, 255, 0.6);
-  --primary: #0284c7;
-  --primary-hover: #0369a1;
-  --ice-accent: #38bdf8;
-  --frost-glow: rgba(56, 189, 248, 0.25);
-  --danger-bg: #fee2e2;
-  --danger-border: #fca5a5;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  background: var(--bg-gradient);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #b2d8c3;
+  color: #1e293b;
   min-height: 100vh;
-  margin: 0;
-  padding: 16px 12px;
-  color: var(--text-main);
-  box-sizing: border-box;
-  background-color: #b2d8c3; /* Jednolite miętowe tło dla całego ekranu */
-  /* Obrazek jako tło - wyśrodkowany, dopasowany wielkością */
-  background-image: url('icon-512.png');
-  background-repeat: no-repeat;
-  background-position: center 20px; /* Obrazek na górze / na środku */
-  background-size: 180px auto;     /* Kontrola rozmiaru ikony lodówki */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
 }
 
-/* 2. Zapewnienie czytelności nagłówka nad tłem */
-header, .app-header, h1 {
-  text-align: center;
-  margin-top: 190px; /* Odsuwa treść aplikacji poniżej ikony lodówki */
-  color: #1e293b;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-
-.container {
-  max-width: 600px;
+/* Główny kontener aplikacji */
+.app-container, .container, main {
+  width: 100%;
+  max-width: 480px;
   margin: 0 auto;
 }
 
-h1 {
-  font-size: 1.6rem;
-  font-weight: 800;
+/* Sekcja nagłówka z logo */
+header, .app-header {
   text-align: center;
-  color: #f0f9ff;
-  text-shadow: 0 0 20px var(--frost-glow), 0 2px 4px rgba(0,0,0,0.3);
   margin-bottom: 20px;
-  letter-spacing: -0.02em;
 }
 
+header img, .logo-img {
+  width: 120px;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px auto;
+}
+
+h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* Karty sekcji */
 .card {
-  background: var(--card-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--card-border);
-  border-radius: 20px;
-  padding: 16px;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3), 0 0 15px var(--frost-glow);
-  margin-bottom: 16px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
 }
 
+/* Formularz dodawania */
 .form-group {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 12px;
 }
 
-@media (min-width: 480px) {
-  .form-group {
-    flex-direction: row;
-  }
-}
-
 input[type="text"], select {
-  width: 100%;
-  padding: 12px 14px;
-  border: 2px solid #cbd5e1;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.95);
-  color: var(--text-main);
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
   font-size: 0.95rem;
-  font-family: inherit;
-  box-sizing: border-box;
-  transition: all 0.2s ease;
+  outline: none;
 }
 
 input[type="text"]:focus, select:focus {
-  outline: none;
-  border-color: var(--ice-accent);
-  box-shadow: 0 0 0 3px var(--frost-glow);
-  background: #ffffff;
+  border-color: #6366f1;
 }
 
-.search-container {
-  margin-bottom: 16px;
-}
-
-button {
-  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
-  color: white;
+button[type="submit"] {
+  background: #0284c7;
+  color: #ffffff;
   border: none;
-  padding: 12px 20px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  font-family: inherit;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.45);
-}
-
-button:active {
-  transform: translateY(0);
 }
 
 .checkbox-label {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
+  color: #475569;
+  cursor: pointer;
+}
+
+/* Przyciski skanera i głosu */
+.btn-scan {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
   font-weight: 600;
-  color: #334155;
-  cursor: pointer;
-  user-select: none;
-}
-
-.checkbox-label input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--primary);
   cursor: pointer;
 }
 
+.btn-voice {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Zakładki (Spiżarnia / Do kupienia) */
 .tabs {
   display: flex;
-  gap: 8px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  padding: 4px;
   margin-bottom: 16px;
-  background: rgba(15, 23, 42, 0.5);
-  padding: 5px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.tab {
+.tab-btn {
   flex: 1;
-  text-align: center;
-  padding: 10px 8px;
-  border-radius: 12px;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #64748b;
   cursor: pointer;
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: #94a3b8;
-  transition: all 0.25s ease;
 }
 
-.tab.active {
+.tab-btn.active {
   background: #ffffff;
-  color: var(--primary);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 10px var(--frost-glow);
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Listy produktów */
+h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #0284c7;
+  margin: 16px 0 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 4px;
 }
 
 .item {
@@ -175,158 +152,61 @@ button:active {
   align-items: center;
   justify-content: space-between;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(203, 213, 225, 0.6);
-  gap: 8px;
-}
-
-.item:last-child {
-  border-bottom: none;
+  border-bottom: 1px solid #f8fafc;
 }
 
 .item-info {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
-  flex: 1;
-}
-
-.item-info strong {
-  font-size: 0.95rem;
-  color: #0f172a;
 }
 
 .badge {
-  font-size: 0.68rem;
-  letter-spacing: 0.04em;
-  background: var(--danger-bg);
-  color: #991b1b;
-  padding: 2px 8px;
-  border-radius: 20px;
-  border: 1px solid var(--danger-border);
-  font-weight: 800;
-  text-transform: uppercase;
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
+/* Przyciski ilości / akcji */
 .controls {
   display: flex;
   align-items: center;
   gap: 6px;
-  flex-shrink: 0;
-}
-
-.qty-count {
-  font-weight: 700;
-  min-width: 20px;
-  text-align: center;
 }
 
 .btn-qty {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  background: #f1f5f9;
+  width: 28px;
+  height: 28px;
   border: 1px solid #cbd5e1;
-  color: #334155;
-  font-weight: 700;
-  font-size: 1.1rem;
-  box-shadow: none;
+  background: #f8fafc;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-.btn-qty:hover {
-  background: #e2e8f0;
-  color: var(--primary);
-}
-
-.btn-buy {
-  padding: 6px 12px;
-  font-size: 0.82rem;
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+.qty-count {
+  font-weight: 600;
+  min-width: 16px;
+  text-align: center;
 }
 
 .btn-delete {
-  background: none;
-  color: #94a3b8;
-  padding: 4px;
+  background: transparent;
   border: none;
+  color: #94a3b8;
   cursor: pointer;
-  font-size: 0.9rem;
-  box-shadow: none;
+  padding: 4px 8px;
 }
 
-.btn-delete:hover {
-  color: #ef4444;
-  background: none;
-}
-
-.shopping-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 2px dashed #e2e8f0;
-}
-
-.shopping-actions button {
-  flex: 1;
-  padding: 10px 8px;
-  font-size: 0.85rem;
-}
-
-.btn-secondary {
-  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-  box-shadow: 0 2px 8px rgba(100, 116, 139, 0.3);
-}
-
-.btn-success {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
-}
-
-.empty-state {
-  text-align: center;
-  color: #64748b;
-  padding: 24px 16px;
-  font-weight: 600;
-}
-
-h3 {
-  margin: 16px 0 8px 0;
-  font-size: 0.82rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--primary);
-  border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 4px;
-  font-weight: 800;
-}
-
-.btn-scan {
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-}
-
-.btn-scan:hover {
-  background: linear-gradient(135deg, #a78bfa 0%, #4f46e5 100%);
-}
-
-.btn-voice {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+.btn-buy {
+  background: #10b981;
   color: white;
   border: none;
-  padding: 10px;
-  border-radius: 8px;
-  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-  transition: all 0.2s ease;
-}
-
-.btn-voice:hover {
-  background: linear-gradient(135deg, #34d399 0%, #047857 100%);
 }
