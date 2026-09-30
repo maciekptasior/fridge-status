@@ -28,6 +28,7 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
 
   <!-- PWA Config -->
 <link rel="manifest" href="manifest.json">
@@ -184,6 +185,56 @@
     }
 
     document.getElementById('add-form').addEventListener('submit', addItem);
+
+    // Inicjalizacja modułu Messaging
+const messaging = firebase.messaging();
+
+// Funkcja prosząca o zgodę i pobierająca token FCM
+async function requestNotificationPermission() {
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      console.log('Zgoda na powiadomienia przyznana.');
+      
+      // Pobranie tokenu rejestracyjnego urządzenia
+      const currentToken = await messaging.getToken({ 
+        vapidKey: 'TWÓJ_WYGENEROWANY_KLUCZ_VAPID' 
+      });
+      
+      if (currentToken) {
+        console.log('FCM Token urządzenia:', currentToken);
+        // Zapisz token w Firebase Realtime Database pod węzłem 'fcm_tokens'
+        saveTokenToDatabase(currentToken);
+      } else {
+        console.log('Brak dostępnego tokenu. Wygeneruj nowy.');
+      }
+    } else {
+      console.log('Użytkownik odrzucił zgodę na powiadomienia.');
+    }
+  } catch (err) {
+    console.error('Błąd podczas uzyskiwania zgody na powiadomienia:', err);
+  }
+}
+
+// Zapis tokenu domownika do bazy danych
+function saveTokenToDatabase(token) {
+  // Możesz zapisać token pod unikalnym kluczem
+  const tokenRef = db.ref('fcm_tokens/' + token.replace(/[.#$/[\]]/g, "_"));
+  tokenRef.set({
+    token: token,
+    updatedAt: Date.now()
+  });
+}
+
+// Obsługa wiadomości, gdy aplikacja jest OTWARTA (na pierwszym planie)
+messaging.onMessage((payload) => {
+  console.log('Wiadomość odebrana na pierwszym planie:', payload);
+  alert(`${payload.notification.title}\n${payload.notification.body}`);
+});
+
+// Wywołaj funkcję (np. po kliknięciu przycisku w interfejsie "Włącz powiadomienia")
+ requestNotificationPermission();
+    
   </script>
   <script>
   if ('serviceWorker' in navigator) {
