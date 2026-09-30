@@ -14,13 +14,6 @@
   <div class="container">
     <h1>Domowa Spiżarnia 🛒</h1>
 
-    <!-- Formularz dodawania produktu -->
-    <div class="card">
-      <!-- Przycisk skanera -->
-      <button id="scan-toggle-btn" type="button" onclick="toggleScanner()" class="btn-scan" style="width: 100%; margin-bottom: 12px;">
-        📷 Skanuj kod kreskowy
-      </button>
-
       <!-- Karta Formularza Dodawania -->
 <div class="card">
   <div style="display: flex; gap: 8px; margin-bottom: 12px;">
@@ -295,46 +288,54 @@ window.handleVoiceInput = function() {
       renderList(shoppingItems, document.getElementById('shopping-list'), 'shopping');
     }
 
-    function renderList(listItems, containerElement, mode) {
-      if (listItems.length === 0) {
-        containerElement.innerHTML = `<div class="empty-state">${searchQuery ? 'Brak wyników wyszukiwania.' : 'Brak produktów w tej sekcji.'}</div>`;
-        return;
-      }
+function renderList(listItems, containerElement, mode) {
+  if (listItems.length === 0) {
+    containerElement.innerHTML = `<div class="empty-state">${searchQuery ? 'Brak wyników wyszukiwania.' : 'Brak produktów w tej sekcji.'}</div>`;
+    return;
+  }
 
-      const grouped = listItems.reduce((acc, item) => {
-        const cat = item.category || 'Inne';
-        if (!acc[cat]) acc[cat] = [];
-        acc[cat].push(item);
-        return acc;
-      }, {});
+  // Grupowanie produktów według kategorii
+  const grouped = listItems.reduce((acc, item) => {
+    const cat = item.category || 'Inne';
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(item);
+    return acc;
+  }, {});
 
-      let html = '';
-      for (const [categoryName, categoryItems] of Object.entries(grouped)) {
-        const icon = CATEGORY_ICONS[categoryName] || '📦';
-        html += `<h3>${icon} ${categoryName}</h3>`;
+  let html = '';
+  for (const [categoryName, categoryItems] of Object.entries(grouped)) {
+    // Sortowanie produktów w ramach kategorii: najpierw obowiązkowe (mustHave === true), potem reszta alfabetycznie
+    categoryItems.sort((a, b) => {
+      if (a.mustHave && !b.mustHave) return -1;
+      if (!a.mustHave && b.mustHave) return 1;
+      return a.name.localeCompare(b.name);
+    });
 
-        html += categoryItems.map(item => `
-          <div class="item">
-            <div class="item-info">
-              <strong>${item.name}</strong>
-              ${item.mustHave ? '<span class="badge">OBOWIĄZKOWY</span>' : ''}
-            </div>
-            <div class="controls">
-              ${mode === 'pantry' ? `
-                <button class="btn-qty" onclick="updateQty('${item.firebaseId}', -1)">-</button>
-                <span class="qty-count">${item.qty}</span>
-                <button class="btn-qty" onclick="updateQty('${item.firebaseId}', 1)">+</button>
-              ` : `
-                <button class="btn-buy" onclick="markAsBought('${item.firebaseId}')">✅ Kupiono</button>
-              `}
-              <button class="btn-delete" onclick="removeItem('${item.firebaseId}')" title="Usuń z bazy">✕</button>
-            </div>
-          </div>
-        `).join('');
-      }
+    const icon = CATEGORY_ICONS[categoryName] || '📦';
+    html += `<h3>${icon} ${categoryName}</h3>`;
 
-      containerElement.innerHTML = html;
-    }
+    html += categoryItems.map(item => `
+      <div class="item">
+        <div class="item-info">
+          <strong>${item.name}</strong>
+          ${item.mustHave ? '<span class="badge">OBOWIĄZKOWY</span>' : ''}
+        </div>
+        <div class="controls">
+          ${mode === 'pantry' ? `
+            <button class="btn-qty" onclick="updateQty('${item.firebaseId}', -1)">-</button>
+            <span class="qty-count">${item.qty}</span>
+            <button class="btn-qty" onclick="updateQty('${item.firebaseId}', 1)">+</button>
+          ` : `
+            <button class="btn-buy" onclick="markAsBought('${item.firebaseId}')">✅ Kupiono</button>
+          `}
+          <button class="btn-delete" onclick="removeItem('${item.firebaseId}')" title="Usuń z bazy">✕</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  containerElement.innerHTML = html;
+}
   </script>
 </body>
 </html>
