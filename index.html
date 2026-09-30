@@ -28,6 +28,15 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+  <!-- PWA Config -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Spiżarnia">
+<link rel="apple-touch-icon" href="icon-192.png">
+
 </head>
 <body>
   <div class="container">
@@ -176,5 +185,14 @@
 
     document.getElementById('add-form').addEventListener('submit', addItem);
   </script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('Service Worker zarejestrowany!'))
+        .catch(err => console.error('Błąd rejestracji Service Workera:', err));
+    });
+  }
+</script>
 </body>
 </html>
