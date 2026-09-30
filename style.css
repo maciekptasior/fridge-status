@@ -317,3 +317,19 @@ h3 {
 .btn-voice:hover {
   background: linear-gradient(135deg, #34d399 0%, #047857 100%);
 }
+
+.bg-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #b2d8c3; /* Identyczny kolor tła */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bg-image {
+  max-width: 512px;
+  width: 100%;
+  height: auto;
+  display: block;
+}
