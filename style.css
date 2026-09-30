@@ -1,5 +1,5 @@
 /* ==========================================================================
-   1. RESET I ZMIENNE
+   1. ZMIENNE I BAZA
    ========================================================================== */
 * {
   box-sizing: border-box;
@@ -8,226 +8,251 @@
 }
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background-color: #a3c9a8;
   color: #1e293b;
   display: flex;
   justify-content: center;
-  padding: 40px 15px;
+  align-items: flex-start;
   min-height: 100vh;
+  padding: 20px 12px;
 }
 
-/* Główny kontener aplikacji */
-body > div, .container {
+.container, body > div {
   width: 100%;
-  max-width: 500px;
+  max-width: 440px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
+  position: relative;
 }
 
 /* ==========================================================================
-   2. NAGŁÓWEK I LOGO (LODÓWKA W TLE)
+   2. NAGŁÓWEK I PODWÓJNA LODÓWKA Z TŁA
    ========================================================================== */
 header, .header {
   position: relative;
   text-align: center;
-  padding: 20px 0 10px 0;
+  padding-top: 100px; /* Miejsce na wyłaniającą się lodówkę */
+  margin-bottom: -15px; /* Lekkie wsunięcie pod pierwszą kartę */
   z-index: 1;
 }
 
-/* Tytuł nagłówka */
-h1 {
-  font-size: 2.2rem;
-  font-weight: 900;
-  color: #0f172a;
-  letter-spacing: -0.5px;
-  position: relative;
+/* Obrazek lodówki wyciągnięty do góry */
+header img, .header img, .logo img {
+  display: block !important;
+  width: 140px;
+  height: auto;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 2;
 }
 
-/* Obrazek lodówki wystający zza pierwszej karty */
-header img, .logo img, .header img {
-  display: block !important;
-  width: 100px;
-  height: auto;
-  margin: 0 auto -35px auto; /* Wsuwa lodówkę pod dolną kartę */
+/* Tytuł pod/za lodówką */
+h1, .app-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
   position: relative;
   z-index: 1;
+  margin-top: 10px;
 }
 
 /* ==========================================================================
-   3. KARTY (BIAŁE KONTENERY)
+   3. BIAŁE KARTY
    ========================================================================== */
-/* Pierwsza karta (formularz) i druga karta (lista) */
-body > div > div:not([class]), 
 .card, 
 form,
-header + div {
+div:has(> .btn-ean),
+div:has(> input[placeholder*="Nazwa"]) {
   background: #ffffff;
   border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   position: relative;
-  z-index: 2;
+  z-index: 3;
 }
 
 /* ==========================================================================
-   4. PRZYCISKI AKCJI (EAN / GŁOSOWO)
+   4. GÓRNE PRZYCISKI (Skanuj EAN / Dodaj głosowo)
    ========================================================================== */
-/* Górne przyciski */
-div:has(> button) {
-  display: flex;
+.action-buttons, div:has(> button:nth-child(2)) {
+  display: flex !important;
+  flex-direction: row !important;
   gap: 10px;
   margin-bottom: 12px;
 }
 
-button {
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 600;
+.btn-ean, button:nth-child(1) {
+  background-color: #6366f1 !important;
+  color: white !important;
   border: none;
-  border-radius: 10px;
-  padding: 10px 14px;
+  border-radius: 12px;
+  padding: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  flex: 1;
   cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.1s ease;
 }
 
-button:active {
-  transform: scale(0.98);
-}
-
-/* Dedykowane kolory przycisków górnych */
-button:nth-child(1) {
-  background-color: #6366f1;
-  color: #ffffff;
+.btn-voice, button:nth-child(2) {
+  background-color: #059669 !important;
+  color: white !important;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
   flex: 1;
-}
-
-button:nth-child(2) {
-  background-color: #059669;
-  color: #ffffff;
-  flex: 1;
+  cursor: pointer;
 }
 
 /* ==========================================================================
-   5. FORMULARZE I POLA WEJŚCIOWE
+   5. FORMULARZ DODAWANIA
    ========================================================================== */
+.add-form, div:has(> input[type="text"]) {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 input[type="text"], select {
-  padding: 10px 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border: 1px solid #f1f5f9;
   background-color: #f8fafc;
+  border-radius: 10px;
+  padding: 10px 12px;
   font-size: 0.9rem;
   outline: none;
 }
 
-input[type="text"]:focus, select:focus {
-  border-color: #0284c7;
-  background-color: #ffffff;
+input[placeholder*="Nazwa"] {
+  flex: 1 1 180px;
 }
 
-/* Układ formularza dodawania */
-div:has(> input[type="text"]) {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
+select {
+  flex: 0 0 90px;
 }
 
-div:has(> input[type="text"]) input[type="text"] {
-  flex: 2;
-  min-width: 160px;
-}
-
-div:has(> input[type="text"]) select {
-  flex: 1;
-}
-
-div:has(> input[type="text"]) button {
-  background-color: #0284c7;
-  color: #ffffff;
+.btn-add, button:has-text("Dodaj") {
+  background-color: #0284c7 !important;
+  color: white !important;
+  border: none;
+  border-radius: 10px;
   padding: 10px 16px;
-}
-
-/* Checkbox */
-label:has(input[type="checkbox"]) {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  margin-top: 8px;
-  font-size: 0.85rem;
-  color: #475569;
+  font-weight: 600;
   cursor: pointer;
 }
 
-/* ==========================================================================
-   6. ZAKŁADKI I WYSZUKIWARKA
-   ========================================================================== */
-/* Kontener przełącznika Spiżarnia / Do kupienia */
-div:has(> button:only-child), .tabs {
+.checkbox-label, label:has(input[type="checkbox"]) {
   display: flex;
-  gap: 8px;
-  margin: 10px 0;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: #64748b;
 }
 
-/* Przycisk wyszukiwarki */
-input[placeholder*="Szukaj"], .search-input {
+/* ==========================================================================
+   6. ZAKŁADKI (Spiżarnia / Do kupienia)
+   ========================================================================== */
+.tabs-container, .tabs, div:has(> .tab) {
+  display: flex !important;
+  background-color: #e2e8f0;
+  padding: 4px;
+  border-radius: 12px;
+  margin: 6px 0;
+}
+
+.tab, .tabs button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.tab.active, .tabs button.active {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* ==========================================================================
+   7. WYSZUKIWARKA
+   ========================================================================== */
+.search-bar, input[placeholder*="Szukaj"] {
   width: 100%;
   max-width: 220px;
-  margin-bottom: 10px;
-  background-color: #ffffff;
+  background-color: #ffffff !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 8px 12px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
 /* ==========================================================================
-   7. LISTA PRODUKTÓW I ELEMENTY ILOŚCI (KONTROLI)
+   8. LISTA PRODUKTÓW I PRZYCISKI ILOŚCI (PRZYWRÓCENIE UKŁADU POZIOMEGO)
    ========================================================================== */
-/* Nagłówki kategorialne (Nabiał, Mięso) */
-h2, h3, .category-title {
-  font-size: 0.9rem;
-  font-weight: 800;
+.category-title, h2, h3 {
   color: #0284c7;
+  font-size: 0.85rem;
+  font-weight: 800;
   text-transform: uppercase;
-  margin: 16px 0 8px 0;
+  margin: 14px 0 8px 0;
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-/* Wiersz pojedynczego produktu */
-div:has(> input + button), .product-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-/* Zapewnienie poziomego układu dla przycisków +, -, wartości i usunięcia */
-div:has(> button) {
+.product-row, div:has(> .badge-required) {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
-  gap: 6px !important;
+  justify-content: space-between !important;
+  padding: 8px 0;
+  border-bottom: 1px solid #f8fafc;
 }
 
-/* Style przycisków akcji na liście */
-div:has(> button) button {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: #334155;
-  border-radius: 6px;
+/* Kontrolki po prawej stronie (ilość i usuwanie) */
+.quantity-controls, div:has(> button:contains("+")) {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 4px !important;
 }
 
-div:has(> button) span {
+/* Przyciski przy produktach: -, +, x */
+.quantity-controls button, 
+div:has(> button:contains("+")) button {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  padding: 0 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+  border-radius: 6px !important;
+  font-size: 0.85rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer;
+}
+
+.badge-required, .badge {
+  background-color: #fee2e2;
+  color: #ef4444;
+  font-size: 0.65rem;
   font-weight: 700;
-  min-width: 16px;
-  text-align: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
 }
