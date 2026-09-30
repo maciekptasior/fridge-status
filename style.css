@@ -29,13 +29,24 @@ body {
 /* Nagłówek */
 header, .app-header {
   text-align: center;
-  margin-top: 100px; /* Miejsce na wychodzącą z tła lodówkę */
+  margin-top: 110px; /* Miejsce na lodówkę wyzierającą z tła */
   margin-bottom: 20px;
+  position: relative;
 }
 
 /* Ukrycie standardowego obrazka w nagłówku, jeśli występuje w HTML */
 header img, .logo-img {
-  display: none !important;
+width: 160px;
+  height: auto;
+  display: block;
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -1; /* Schowana za kartę poniżej */
+  
+  /* Mieszanie kolorów: usuwa kwadratowe tło obrazka i wtapia je idealnie w #b2d8c3 */
+  mix-blend-mode: multiply;
 }
 
 h1 {
