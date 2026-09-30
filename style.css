@@ -25,33 +25,43 @@ body {
   z-index: 1; /* Kontener wyżej niż tło */
 }
 
-/* Nagłówek i logo w tle */
+/* Nagłówek */
 header, .app-header {
   text-align: center;
-  margin-top: 110px; /* Miejsce na lodówkę wyzierającą z tła */
   margin-bottom: 20px;
-  position: relative;
 }
 
-/* Ikona lodówki umieszczona W TLE za kartami */
+/* Usuwamy tradycyjne wyświetlanie obrazka z nagłówka */
 header img, .logo-img {
-  width: 160px;
-  height: auto;
-  display: block;
-  position: absolute;
-  top: -120px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: -1; /* Schowana za kartę poniżej */
-  
-  /* Mieszanie kolorów: usuwa kwadratowe tło obrazka i wtapia je idealnie w #b2d8c3 */
-  mix-blend-mode: multiply;
+  display: none !important;
 }
 
 h1 {
   font-size: 1.8rem;
   font-weight: 800;
   color: #0f172a;
+}
+
+/* Pierwsza karta (formularz) z ikoną lodówki w tle */
+.card:first-of-type {
+  position: relative;
+  overflow: visible;
+}
+
+.card:first-of-type::before {
+  content: "";
+  position: absolute;
+  top: -90px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 180px;
+  background-image: url('icon-512.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: -1; /* Umieszcza lodówkę ZA kartą formularza */
+  mix-blend-mode: multiply; /* Wtapia tło obrazka w #b3d4b6 */
 }
 
 /* Karty sekcji */
