@@ -4,6 +4,11 @@
   padding: 0;
 }
 
+html, body {
+  width: 100%;
+  overflow-x: hidden; /* Zapobiega przewijaniu na boki */
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background-color: #b3d4b6;
@@ -12,146 +17,157 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 20px;
-  position: relative;
+  padding: 12px;
 }
 
 /* Główny kontener aplikacji */
 .app-container, .container, main {
   width: 100%;
-  max-width: 480px;
+  max-width: 420px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
 }
 
-/* Nagłówek i tło z lodówką */
+/* Nagłówek i lodówka w tle */
 header, .app-header {
   text-align: center;
-  margin-bottom: 25px;
+  margin-top: 10px;
+  margin-bottom: 20px;
   position: relative;
   z-index: 1;
 }
 
-/* Obrazek lodówki w tle - za wszystkimi kartami i tekstem */
 header::before, .app-header::before {
   content: "";
   position: absolute;
-  top: -20px;
+  top: -15px;
   left: 50%;
   transform: translateX(-50%);
-  width: 160px;
-  height: 160px;
+  width: 140px;
+  height: 140px;
   background-image: url('icon-512.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  z-index: -1; /* Umieszcza lodówkę w najniższej warstwie */
+  z-index: -1;
   mix-blend-mode: multiply;
 }
 
-/* Usuwamy tradycyjne wyświetlanie obrazka z nagłówka */
 header img, .logo-img {
   display: none !important;
 }
 
 h1 {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 800;
   color: #0f172a;
   position: relative;
   z-index: 2;
+  white-space: nowrap;
 }
 
-/* Karty sekcji - wymuszenie z-index wyższego niż tło lodówki */
+/* Karty */
 .card {
   background: #ffffff;
   border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   position: relative;
-  z-index: 5; /* Wszystkie karty znajdują się nad lodówką */
+  z-index: 5;
+  width: 100%;
 }
 
-/* Usunięcie starego pseudo-elementu z pierwszej karty */
 .card:first-of-type::before {
   display: none !important;
 }
 
-/* Formularz wprowadzania */
-.quick-actions, .form-group {
+/* Górne przyciski */
+.quick-actions {
   display: flex;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
-.btn-scan, .btn-voice, button {
-  font-family: inherit;
-  font-size: 0.9rem;
+.btn-scan, .btn-voice {
+  flex: 1;
+  font-size: 0.85rem;
+  padding: 10px 6px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .btn-scan {
-  flex: 1;
   background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
-  color: #ffffff;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
 }
 
 .btn-voice {
-  flex: 1;
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #ffffff;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
+}
+
+/* Formularz wprowadzania - POPRAWIONE ZAWIJANIE NA MOBILCE */
+.form-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+  width: 100%;
 }
 
 input[type="text"], select {
-  padding: 10px 12px;
+  padding: 10px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   background-color: #f8fafc;
   outline: none;
+  box-sizing: border-box;
 }
 
-input[type="text"]:focus, select:focus {
-  border-color: #0284c7;
-  background-color: #ffffff;
-}
-
+/* Pole nazwy bierze całą szerokość lub dzieloną z wyborem */
 .form-group input[type="text"] {
-  flex: 2;
+  flex: 1 1 100%; /* Domyślnie pełna szerokość na bardzo małych ekranach */
+  min-width: 0;
 }
 
 .form-group select {
-  flex: 1;
+  flex: 1 1 120px;
+  min-width: 0;
 }
 
 button[type="submit"], .btn-add {
   background: #0284c7;
   color: #ffffff;
   border: none;
-  padding: 10px 16px;
+  padding: 10px 14px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* Na ekranach od 360px upychamy w jeden rząd */
+@media (min-width: 360px) {
+  .form-group input[type="text"] {
+    flex: 1 1 130px;
+  }
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
+  gap: 6px;
+  font-size: 0.85rem;
   color: #475569;
   cursor: pointer;
+  margin-top: 4px;
 }
 
 /* Zakładki Spiżarnia / Do kupienia */
@@ -160,22 +176,22 @@ button[type="submit"], .btn-add {
   background: #e2e8f0;
   border-radius: 12px;
   padding: 4px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   gap: 4px;
-  position: relative;
-  z-index: 5;
+  width: 100%;
 }
 
 .tabs button, .tab-btn, .tab {
   flex: 1;
-  padding: 10px 14px;
+  padding: 8px 10px;
   border: none;
   background: transparent;
   border-radius: 8px;
   font-weight: 600;
+  font-size: 0.85rem;
   color: #64748b;
   cursor: pointer;
-  transition: all 0.2s ease;
+  text-align: center;
 }
 
 .tabs button.active, .tab-btn.active, .tab.active {
@@ -187,45 +203,16 @@ button[type="submit"], .btn-add {
 /* Pole wyszukiwania */
 .search-box, input[placeholder*="Szukaj"] {
   width: 100%;
-  margin-bottom: 12px;
-  position: relative;
-  z-index: 5;
-}
-
-/* Przyciski akcji na dole */
-.action-buttons, .bottom-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 16px;
-  flex-wrap: wrap;
-}
-
-.action-buttons button, .card button:not(.btn-scan):not(.btn-voice):not([type="submit"]):not(.tab-btn) {
-  padding: 8px 14px;
-  border: 1px solid #cbd5e1;
-  background: #f8fafc;
-  color: #334155;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.action-buttons button:hover, .card button:not(.btn-scan):not(.btn-voice):not([type="submit"]):not(.tab-btn):hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
+  margin-bottom: 10px;
 }
 
 /* Listy produktów */
 h3 {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #0284c7;
-  margin: 16px 0 8px 0;
+  margin: 12px 0 6px 0;
   padding-bottom: 4px;
   border-bottom: 1px solid #f1f5f9;
 }
@@ -234,8 +221,39 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 0;
+  padding: 8px 0;
   border-bottom: 1px solid #f8fafc;
+  gap: 8px;
+}
+
+.item-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Kontrolki ilości po prawej */
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.quantity-controls button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  border-radius: 6px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .badge {
@@ -245,4 +263,5 @@ h3 {
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 4px;
+  margin-left: 4px;
 }
