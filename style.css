@@ -22,13 +22,32 @@ body {
   max-width: 480px;
   margin: 0 auto;
   position: relative;
-  z-index: 1; /* Kontener wyżej niż tło */
+  z-index: 1;
 }
 
-/* Nagłówek */
+/* Nagłówek i tło z lodówką */
 header, .app-header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Obrazek lodówki w tle - za wszystkimi kartami i tekstem */
+header::before, .app-header::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 160px;
+  background-image: url('icon-512.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: -1; /* Umieszcza lodówkę w najniższej warstwie */
+  mix-blend-mode: multiply;
 }
 
 /* Usuwamy tradycyjne wyświetlanie obrazka z nagłówka */
@@ -40,31 +59,11 @@ h1 {
   font-size: 1.8rem;
   font-weight: 800;
   color: #0f172a;
-}
-
-/* Pierwsza karta (formularz) z ikoną lodówki w tle */
-.card:first-of-type {
   position: relative;
-  overflow: visible;
+  z-index: 2;
 }
 
-.card:first-of-type::before {
-  content: "";
-  position: absolute;
-  top: -90px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 180px;
-  height: 180px;
-  background-image: url('icon-512.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  z-index: -1; /* Umieszcza lodówkę ZA kartą formularza */
-  mix-blend-mode: multiply; /* Wtapia tło obrazka w #b3d4b6 */
-}
-
-/* Karty sekcji */
+/* Karty sekcji - wymuszenie z-index wyższego niż tło lodówki */
 .card {
   background: #ffffff;
   border-radius: 16px;
@@ -72,7 +71,12 @@ h1 {
   margin-bottom: 16px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
   position: relative;
-  z-index: 1;
+  z-index: 5; /* Wszystkie karty znajdują się nad lodówką */
+}
+
+/* Usunięcie starego pseudo-elementu z pierwszej karty */
+.card:first-of-type::before {
+  display: none !important;
 }
 
 /* Formularz wprowadzania */
@@ -158,6 +162,8 @@ button[type="submit"], .btn-add {
   padding: 4px;
   margin-bottom: 16px;
   gap: 4px;
+  position: relative;
+  z-index: 5;
 }
 
 .tabs button, .tab-btn, .tab {
@@ -182,6 +188,8 @@ button[type="submit"], .btn-add {
 .search-box, input[placeholder*="Szukaj"] {
   width: 100%;
   margin-bottom: 12px;
+  position: relative;
+  z-index: 5;
 }
 
 /* Przyciski akcji na dole */
