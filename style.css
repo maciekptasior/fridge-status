@@ -6,7 +6,7 @@
 
 html, body {
   width: 100%;
-  overflow-x: hidden; /* Zapobiega przewijaniu na boki */
+  overflow-x: hidden;
 }
 
 body {
@@ -111,7 +111,7 @@ h1 {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
-/* Formularz wprowadzania - POPRAWIONE ZAWIJANIE NA MOBILCE */
+/* Formularz wprowadzania */
 .form-group {
   display: flex;
   flex-wrap: wrap;
@@ -130,9 +130,8 @@ input[type="text"], select {
   box-sizing: border-box;
 }
 
-/* Pole nazwy bierze całą szerokość lub dzieloną z wyborem */
 .form-group input[type="text"] {
-  flex: 1 1 100%; /* Domyślnie pełna szerokość na bardzo małych ekranach */
+  flex: 1 1 100%;
   min-width: 0;
 }
 
@@ -153,7 +152,6 @@ button[type="submit"], .btn-add {
   white-space: nowrap;
 }
 
-/* Na ekranach od 360px upychamy w jeden rząd */
 @media (min-width: 360px) {
   .form-group input[type="text"] {
     flex: 1 1 130px;
@@ -217,16 +215,17 @@ h3 {
   border-bottom: 1px solid #f1f5f9;
 }
 
-.item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.item, .product-item, .item-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
   padding: 8px 0;
   border-bottom: 1px solid #f8fafc;
   gap: 8px;
 }
 
-.item-name {
+.item-name, .product-name {
   font-weight: 600;
   font-size: 0.9rem;
   overflow: hidden;
@@ -234,26 +233,50 @@ h3 {
   white-space: nowrap;
 }
 
-/* Kontrolki ilości po prawej */
-.quantity-controls {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
+/* PRECYZYJNE FORMATOWANIE PRZYCISKÓW ILOŚCI (-, +, X) */
+.quantity-controls, .item-actions, div:has(> button:contains("+")) {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 6px !important;
+  flex-shrink: 0 !important;
 }
 
-.quantity-controls button {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
-  color: #334155;
-  border-radius: 6px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.quantity-controls button,
+.item-actions button,
+.item button {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  max-width: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 1px solid #cbd5e1 !important;
+  background-color: #ffffff !important;
+  color: #334155 !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+}
+
+.quantity-controls span,
+.item-actions span,
+.item span {
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  min-width: 18px !important;
+  text-align: center !important;
+  display: inline-block !important;
+  color: #1e293b !important;
 }
 
 .badge {
